@@ -1,0 +1,300 @@
+openapi: 3.0.3
+info:
+  title: Hub API
+  description: APIs for dashboard and transmission
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: Dashboard
+  - name: Transmission
+
+paths:
+  /containers/{containerId}/clusters/{clusterId}/pack-metrics/{packId}:
+    get:
+      tags:
+        - Dashboard
+      summary: Get the metrics of a pack
+      operationId: getPackMetrics
+      parameters:
+        - $ref: "#/components/parameters/containerId"
+        - $ref: "#/components/parameters/clusterId"
+        - $ref: "#/components/parameters/packId"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PackMetricsResponse"
+  /containers/{containerId}/clusters/{clusterId}/pack-overviews:
+    get:
+      tags:
+        - Dashboard
+      summary: Get the metrics of all packs in a cluster
+      operationId: listPackOverviews
+      parameters:
+        - $ref: "#/components/parameters/containerId"
+        - $ref: "#/components/parameters/clusterId"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPackOverviewsResponse"
+  /overview:
+    get:
+      tags:
+        - Dashboard
+      summary: Get dashboard overview
+      operationId: getDashboardOverview
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Overview"
+  /transmission:
+    post:
+      tags:
+        - Transmission
+      summary: transmit data to the server
+      operationId: transmitData
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eisMeasurements:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/EisMeasurement"
+                generatedRecords:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/GeneratedRecord"
+                packMetricsRecords:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/PackMetricsRecord"
+      responses:
+        "201":
+          description: Successful response
+components:
+  schemas:
+    PackMetricsResponse:
+      type: object
+      properties:
+        metrics:
+          $ref: "#/components/schemas/PackMetrics"
+        measurements:
+          type: array
+          items:
+            $ref: "#/components/schemas/EisMeasurement"
+    EisMeasurement:
+      type: object
+      properties:
+        containerId:
+          type: string
+        clusterId:
+          type: string
+        packId:
+          type: string
+        cellId:
+          type: string
+        realImpedance:
+          type: number
+        frequency:
+          type: number
+        imagImpedance:
+          type: number
+        creationTime:
+          type: string
+          format: date-time
+    Diagnostic:
+      type: object
+      properties:
+        seiRate:
+          type: number
+        temperature:
+          type: number
+        dendritesRate:
+          type: number
+        electrolyteRate:
+          type: number
+        polarRate:
+          type: number
+        conductRate:
+          type: number
+    Overview:
+      type: object
+      properties:
+        configuration:
+          type: object
+          properties:
+            containers:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  clusters:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        packs:
+                          type: array
+                          items:
+                            type: string
+        dashboard:
+          type: object
+          properties:
+            monthlyInspections:
+              type: integer
+            totalInspections:
+              type: integer
+            totalMeasurements:
+              type: integer
+            totalRiskySamples:
+              type: integer
+            cumulativeRiskIdentifications:
+              type: integer
+    PackOverview:
+      type: object
+      properties:
+        packId:
+          type: string
+        dispersionRate:
+          type: number
+        averageImpedances:
+          type: array
+          items:
+            $ref: "#/components/schemas/AverageImpedanceRecord"
+    ListPackOverviewsResponse:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/PackOverview"
+    AverageImpedanceRecord:
+      type: object
+      properties:
+        frequency:
+          type: number
+        averageImpedance:
+          type: number
+    PackMetrics:
+      type: object
+      properties:
+        packId:
+          type: string
+        dispersionRate:
+          type: number
+        safetyRate:
+          type: number
+        diagnostics:
+          type: object
+          properties:
+            max:
+              $ref: "#/components/schemas/Diagnostic"
+            min:
+              $ref: "#/components/schemas/Diagnostic"
+        packHealthHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/PackHealth"
+    PackHealth:
+      type: object
+      properties:
+        safetyRate:
+          type: number
+        creationTime:
+          type: string
+          format: date
+    GeneratedRecord:
+      type: object
+      properties:
+        containerId:
+          type: string
+        clusterId:
+          type: string
+        packId:
+          type: string
+        cellId:
+          type: string
+        creationTime:
+          type: string
+          format: date-time
+        dispersionRate:
+          type: number
+        temperature:
+          type: number
+        seiRate:
+          type: number
+        dendritesRate:
+          type: number
+        electrolyteRate:
+          type: number
+        polarRate:
+          type: number
+        conductRate:
+          type: number
+    PackMetricsRecord:
+      type: object
+      properties:
+        containerId:
+          type: string
+        clusterId:
+          type: string
+        packId:
+          type: string
+        creationTime:
+          type: string
+          format: date-time
+        dispersionRate:
+          type: number
+        safetyRate:
+          type: number
+
+  parameters:
+    containerId:
+      in: path
+      required: true
+      name: containerId
+      schema:
+        type: string
+    packId:
+      in: path
+      required: true
+      name: packId
+      schema:
+        type: string
+    clusterId:
+      in: path
+      schema:
+        type: string
+      required: true
+      name: clusterId
+    dateFrom:
+      in: query
+      schema:
+        type: string
+        format: date-time
+      required: false
+      name: dateFrom
+    dateTo:
+      in: query
+      schema:
+        type: string
+        format: date-time
+      required: false
+      name: dateTo
