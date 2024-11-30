@@ -1,0 +1,78 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.5'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id 'org.openapi.generator' version '7.10.0'
+}
+
+group = 'com.xdra'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+openApiGenerate {
+	generatorName = 'spring'
+	inputSpec = "$projectDir/doc/openapi.yaml" // Path to your OpenAPI spec file
+	outputDir = "$buildDir/generated/generated-sources" // Output directory for generated code
+	apiPackage = 'com.xdra.hub.api' // Package for API interfaces
+	generateApiTests = false // Don't generate API tests
+	modelPackage = 'com.xdra.hub.model' // Package for data models
+	generateModelTests = false // Don't generate model tests
+	generateModelDocumentation = false // Don't generate model documentation
+	configOptions = [
+			dateLibrary: 'java8',  // Use Java 8 date/time types
+			interfaceOnly: 'true', // Generate only interfaces for controllers
+			useSpringBoot3: 'true', // Enable Spring Boot 3 compatibility
+			sourceFolder: 'src/main/java', // Output directory for generated code
+			useTags: 'true', // Use tags for API operations
+			library: 'spring-boot' // Use Spring Boot library
+	]
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs += "$buildDir/generated/generated-sources/src/main/java"
+		}
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.postgresql:postgresql:42.7.4'
+	implementation 'org.liquibase:liquibase-core:4.27.0'
+
+	implementation 'com.google.guava:guava:33.3.1-jre'
+
+	// openapi
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+	implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+	implementation 'io.swagger.core.v3:swagger-annotations-jakarta:2.2.10'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

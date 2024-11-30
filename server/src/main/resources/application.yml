@@ -1,0 +1,25 @@
+server:
+  port: 8081
+  tomcat:
+    max-http-post-size: 10MB
+spring:
+  application:
+    name: hub
+  datasource:
+    url: jdbc:postgresql://localhost:5432/xdra
+    username: xdra
+    password: Test!123
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 100
+      minimum-idle: 5
+      idle-timeout: 10000
+      pool-name: HikariCP
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 200
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
