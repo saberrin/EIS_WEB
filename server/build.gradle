@@ -14,6 +14,10 @@ java {
 	}
 }
 
+jar {
+	enabled = false
+}
+
 openApiGenerate {
 	generatorName = 'spring'
 	inputSpec = "$projectDir/doc/openapi.yaml" // Path to your OpenAPI spec file
@@ -33,6 +37,8 @@ openApiGenerate {
 	]
 }
 
+compileJava.dependsOn tasks.openApiGenerate
+
 sourceSets {
 	main {
 		java {
@@ -48,6 +54,7 @@ configurations {
 }
 
 repositories {
+	maven { url 'https://maven.aliyun.com/repository/public/' }
 	mavenCentral()
 }
 

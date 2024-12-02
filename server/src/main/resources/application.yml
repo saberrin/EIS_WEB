@@ -1,12 +1,12 @@
 server:
-  port: 8081
+  port: 8080
   tomcat:
     max-http-post-size: 10MB
 spring:
   application:
     name: hub
   datasource:
-    url: jdbc:postgresql://localhost:5432/xdra
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/xdra}
     username: xdra
     password: Test!123
     driver-class-name: org.postgresql.Driver
