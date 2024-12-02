@@ -181,7 +181,7 @@ public class TransmissionService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<TransmitDataRequest> requestEntity = new HttpEntity<>(request, headers);
-        ResponseEntity<Void> response = restTemplate.postForEntity("http://localhost:8081/api/v1/transmit-data", requestEntity, Void.class);
+        ResponseEntity<Void> response = restTemplate.postForEntity("http://localhost:8080/api/v1/transmit-data", requestEntity, Void.class);
         System.out.println(response.getStatusCode());
     }
 }

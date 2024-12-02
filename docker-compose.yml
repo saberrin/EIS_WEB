@@ -1,0 +1,42 @@
+services:
+  server:
+    build:
+      context: ./server
+    container_name: hub_server
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=jdbc:postgresql://db:5432/xdra
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+
+  db:
+    image: postgres:14
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: xdra
+      POSTGRES_PASSWORD: Test!123
+      POSTGRES_DB: xdra
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1.5'
+          memory: 1G
+
+volumes:
+  pgdata:
