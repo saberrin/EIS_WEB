@@ -1,4 +1,4 @@
-package com.xdra.hub.service;
+package com.xdra.hub.configuration;
 
 import com.xdra.hub.entity.ClusterEntity;
 import com.xdra.hub.entity.ContainerEntity;

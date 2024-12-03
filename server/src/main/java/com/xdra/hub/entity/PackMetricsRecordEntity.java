@@ -16,7 +16,8 @@ import java.time.Instant;
 @AllArgsConstructor
 public class PackMetricsRecordEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pack_metrics_record_seq")
+    @SequenceGenerator(name = "pack_metrics_record_seq", sequenceName = "pack_metrics_record_id_seq", allocationSize = 1)
     @Column(name = "id")
     private Long id;
     @Column(name = "container_id")

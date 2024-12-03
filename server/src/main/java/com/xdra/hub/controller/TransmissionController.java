@@ -2,7 +2,7 @@ package com.xdra.hub.controller;
 
 import com.xdra.hub.api.TransmissionApi;
 import com.xdra.hub.model.TransmitDataRequest;
-import com.xdra.hub.service.TransmissionService;
+import com.xdra.hub.transmission.TransmissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

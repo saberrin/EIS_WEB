@@ -16,7 +16,8 @@ import java.time.Instant;
 @AllArgsConstructor
 public class GeneratedRecordEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generated_record_seq")
+    @SequenceGenerator(name = "generated_record_seq", sequenceName = "generated_record_id_seq", allocationSize = 1)
     @Column(name = "id")
     private Long id;
     @Column(name = "container_id")

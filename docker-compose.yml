@@ -6,7 +6,12 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=jdbc:postgresql://db:5432/xdra
+      - DATABASE_URL=db:5432
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
     ports:
       - "8080:8080"
     deploy:

@@ -1,4 +1,4 @@
-package com.xdra.hub.service;
+package com.xdra.hub.transmission;
 
 import com.xdra.hub.entity.EisMeasurementEntity;
 import com.xdra.hub.entity.GeneratedRecordEntity;

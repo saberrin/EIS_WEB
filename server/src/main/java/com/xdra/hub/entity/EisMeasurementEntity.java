@@ -16,7 +16,8 @@ import java.time.Instant;
 @AllArgsConstructor
 public class EisMeasurementEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "eis_measurement_seq")
+    @SequenceGenerator(name = "eis_measurement_seq", sequenceName = "eis_measurement_id_seq", allocationSize = 1)
     @Column(name = "id")
     private Long id;
     @Column(name = "container_id")

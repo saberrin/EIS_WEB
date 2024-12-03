@@ -190,8 +190,10 @@ components:
           type: integer
         totalInspections:
           type: integer
+          format: int64
         totalMeasurements:
           type: integer
+          format: int64
         totalRiskySamples:
           type: integer
         cumulativeRiskIdentifications:
