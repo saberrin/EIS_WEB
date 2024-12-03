@@ -2,7 +2,7 @@ package com.xdra.hub.controller;
 
 import com.xdra.hub.api.ConfigurationApi;
 import com.xdra.hub.model.SystemConfiguration;
-import com.xdra.hub.service.ConfigurationService;
+import com.xdra.hub.configuration.ConfigurationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

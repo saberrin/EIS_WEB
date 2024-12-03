@@ -1,5 +1,7 @@
 package com.xdra.hub.service;
 
+import com.xdra.hub.analytics.AnalyticsService;
+import com.xdra.hub.configuration.ConfigurationService;
 import com.xdra.hub.entity.EisMeasurementEntity;
 import com.xdra.hub.entity.GeneratedRecordEntity;
 import com.xdra.hub.entity.PackMetricsRecordEntity;
@@ -15,13 +17,16 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
-public class DashboardService {
+@Slf4j
+public class PackService {
 
     private final EisMeasurementRepository eisMeasurementRepository;
     private final GeneratedRecordRepository generatedRecordRepository;
@@ -33,11 +38,6 @@ public class DashboardService {
 
     @Value("${dashboard.data-retention-days:30}")
     private int dataRetentionDays;
-
-    public Overview getDashboardOverview() {
-        Overview overview = new Overview();
-        return overview;
-    }
 
     public PackMetricsResponse getPackMetrics(String containerId, String clusterId, String packId) {
         Instant createdAfter = ZonedDateTime.now().minusDays(dataRetentionDays).toInstant();

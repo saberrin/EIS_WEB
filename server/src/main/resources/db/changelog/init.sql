@@ -87,3 +87,11 @@ create table scheduled_tasks (
 CREATE INDEX execution_time_idx ON scheduled_tasks (execution_time);
 CREATE INDEX last_heartbeat_idx ON scheduled_tasks (last_heartbeat);
 CREATE INDEX priority_execution_time_idx on scheduled_tasks (priority desc, execution_time asc);
+
+--changeset bruce.jeaung:analytics
+create table if not exists monthly_statistics (
+    id bigserial primary key,
+    year_month char(7) unique,
+    total_inspections integer,
+    total_measurements bigint
+);
