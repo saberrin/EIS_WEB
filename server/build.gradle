@@ -64,6 +64,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.postgresql:postgresql:42.7.4'
 	implementation 'org.liquibase:liquibase-core:4.27.0'
+	implementation 'com.github.kagkarlsson:db-scheduler:15.0.0'
 
 	implementation 'com.google.guava:guava:33.3.1-jre'
 
