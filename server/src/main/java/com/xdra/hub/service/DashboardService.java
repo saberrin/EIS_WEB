@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,9 +26,13 @@ public class DashboardService {
     private final EisMeasurementRepository eisMeasurementRepository;
     private final GeneratedRecordRepository generatedRecordRepository;
     private final PackMetricsRecordRepository packMetricsRecordRepository;
+    private final ConfigurationService configurationService;
 
     @Value("${dashboard.number-pack-metrics:7}")
     private int numberOfPackMetrics;
+
+    @Value("${dashboard.data-retention-days:30}")
+    private int dataRetentionDays;
 
     public Overview getDashboardOverview() {
         Overview overview = new Overview();
@@ -35,7 +40,9 @@ public class DashboardService {
     }
 
     public PackMetricsResponse getPackMetrics(String containerId, String clusterId, String packId) {
-        List<EisMeasurementEntity> eisMeasurements = eisMeasurementRepository.getPackLatestRecords(Long.parseLong(packId));
+        Instant createdAfter = ZonedDateTime.now().minusDays(dataRetentionDays).toInstant();
+
+        List<EisMeasurementEntity> eisMeasurements = eisMeasurementRepository.getPackLatestRecords(Long.parseLong(packId), createdAfter);
         PackMetricsResponse response = new PackMetricsResponse();
         response.setMeasurements(eisMeasurements.stream().map(entity -> {
             EisMeasurement measurement = new EisMeasurement();
@@ -56,7 +63,7 @@ public class DashboardService {
         metrics.setPackId(packId);
         response.setMetrics(metrics);
 
-        List<PackMetricsRecordEntity> packMetricsRecords = packMetricsRecordRepository.getPackLatestNRecords(Long.parseLong(packId), numberOfPackMetrics);
+        List<PackMetricsRecordEntity> packMetricsRecords = packMetricsRecordRepository.getPackLatestNRecords(Long.parseLong(packId), createdAfter, numberOfPackMetrics);
         packMetricsRecords.stream().findFirst().ifPresentOrElse(packMetricsRecord -> {
             metrics.setDispersionCoefficient(packMetricsRecord.getDispersionCoefficient());
             metrics.setSafetyRate(packMetricsRecord.getSafetyRate());
@@ -72,7 +79,7 @@ public class DashboardService {
                 .collect(Collectors.toMap(PackHealth::getCreationTime, val -> val, (existing, replacement) -> existing))
                 .values().stream().toList());
 
-        List<GeneratedRecordEntity> generatedRecords = generatedRecordRepository.getPackLatestRecords(Long.parseLong(packId));
+        List<GeneratedRecordEntity> generatedRecords = generatedRecordRepository.getPackLatestRecords(Long.parseLong(packId), createdAfter);
         metrics.setDiagnostics(buildDiagnostic(generatedRecords));
 
         return response;
@@ -126,8 +133,10 @@ public class DashboardService {
     }
 
     public ListPackOverviewsResponse listPackOverviews(String containerId, String clusterId) {
-        List<EisMeasurementEntity> eisMeasurements = eisMeasurementRepository.getLatestRecordsGroupByPackId(Long.parseLong(containerId), Long.parseLong(clusterId));
-        List<PackMetricsRecordEntity> packMetricsRecords = packMetricsRecordRepository.getLatestRecordsGroupByPackId(Long.parseLong(containerId), Long.parseLong(clusterId));
+        List<Long> packIds = configurationService.getPackIds(containerId, clusterId).stream().map(Long::parseLong).toList();
+        Instant createdAfter = ZonedDateTime.now().minusDays(dataRetentionDays).toInstant();
+        List<EisMeasurementEntity> eisMeasurements = eisMeasurementRepository.getLatestRecordsGroupByPackId(packIds, createdAfter);
+        List<PackMetricsRecordEntity> packMetricsRecords = packMetricsRecordRepository.getLatestRecordsGroupByPackId(packIds, createdAfter);
 
         Map<Long, PackOverview> overviewMap = getPackOverviewMap(packMetricsRecords);
 

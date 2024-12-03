@@ -50,4 +50,14 @@ public class ConfigurationService {
         this.systemConfiguration = systemConfiguration;
         log.info("system configuration loaded {}", systemConfiguration);
     }
+
+    public List<String> getPackIds(String containerId, String clusterId) {
+        return systemConfiguration.getContainers().stream()
+                .filter(container -> container.getId().equals(containerId))
+                .flatMap(container -> container.getClusters().stream())
+                .filter(cluster -> cluster.getId().equals(clusterId))
+                .findFirst()
+                .map(Cluster::getPacks)
+                .orElseThrow(() -> new IllegalArgumentException("containerId or clusterId not found"));
+    }
 }
