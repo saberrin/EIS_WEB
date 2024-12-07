@@ -52,6 +52,7 @@ public class AnalyticsService {
         Overview overview = new Overview();
         overview.setTotalInspections(historicalStats.getTotalInspections() + currentStats.getTotalInspections());
         overview.setTotalMeasurements(historicalStats.getTotalMeasurements() + currentStats.getTotalMeasurements());
+        overview.setMonthlyInspections((int) currentStats.getTotalInspections());
         return overview;
     }
 }
