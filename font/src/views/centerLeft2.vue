@@ -27,6 +27,20 @@
 </template>
 <script>
 export default {
+  props: {
+    currentPack: {
+      type: Number,
+      required: true
+    }
+  },
+  watch: {
+    currentPack: {
+      handler(newVal, oldVal) {
+        console.log('new pack index observed ' + newVal)
+      },
+      immediate: true
+    }
+  },
   data() {
     return {
       currentIndex: 0, // Current highlighted index

@@ -19,6 +19,20 @@
 <script>
 import BottomLeftChart from '@/components/echart/bottom/bottomLeftChart'
 export default {
+  props: {
+    packMeasurements: {
+      type: Array,
+      required: true
+    }
+  },
+  watch: {
+    packMeasurements: {
+      handler(newVal, oldVal) {
+        console.log('new measurements observed')
+      },
+      immediate: true
+    }
+  },
   components: {
     BottomLeftChart
   }

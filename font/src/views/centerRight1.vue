@@ -18,6 +18,20 @@
 
 <script>
 export default {
+  props: {
+    dispersionCoefficientRecords: {
+      type: Array,
+      required: true
+    }
+  },
+  watch: {
+    dispersionCoefficientRecords: {
+      handler(newVal, oldVal) {
+        console.log('new dispersion coefficient records observed ' + JSON.stringify(newVal))
+      },
+      immediate: true
+    }
+  },
   data() {
     return {
       config: {

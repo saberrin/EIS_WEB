@@ -25,6 +25,20 @@
 <script>
 import BottomRightChart from "@/components/echart/bottom/bottomRightChart";
 export default {
+  props: {
+    packMetrics: {
+      type: Object,
+      required: true
+    }
+  },
+  watch: {
+    packMetrics: {
+      handler(newVal, oldVal) {
+        console.log('new metrics observed ' + JSON.stringify(newVal))
+      },
+      immediate: true
+    }
+  },
   components: {
     BottomRightChart,
   }

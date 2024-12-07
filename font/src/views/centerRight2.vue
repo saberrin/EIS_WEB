@@ -19,6 +19,20 @@
 // import centerRight2Chart1 from '@/components/echart/centerRight/centerRightChart'
 
 export default {
+  props: {
+    averageImpedanceRecords: {
+      type: Array,
+      required: true
+    }
+  },
+  watch: {
+    averageImpedanceRecords: {
+      handler(newVal, oldVal) {
+        console.log('new average impedance records observed ' + JSON.stringify(newVal))
+      },
+      immediate: true
+    }
+  },
   data() {
     return {
       config: {

@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     fetchData() {
-      axios.get("http://192.168.137.2:8080/api/v1/overview")
+      axios.get("http://localhost:8080/api/v1/overview")
         .then((response) => {
           const data = response.data;
 
