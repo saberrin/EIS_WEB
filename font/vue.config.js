@@ -1,14 +1,11 @@
-const path = require('path')
-const resolve = dir => {
-  return path.join(__dirname, dir)
-}
 module.exports = {
-  publicPath: './',
-  chainWebpack: config => {
-    config.resolve.alias
-      .set('_c', resolve('src/components')) // key,value自行定义，比如.set('@@', resolve('src/components'))
-      devServer: {
-    historyApiFallback: true // 开启历史模式下的路由处理
-  }
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://192.168.137.2:8080',  // 后端服务器地址
+        changeOrigin: true,  // 修改源
+        pathRewrite: { '^/api': '' },  // 重写路径
+      },
+    },
   },
-}
+};
