@@ -1,7 +1,7 @@
 services:
   frontend:
     build:
-      context: ./font
+      context: ./frontend
       args:
         - BACKEND_URL=http://localhost:8080
     container_name: hub_frontend
