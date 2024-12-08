@@ -4,7 +4,7 @@ server:
     max-http-post-size: 10MB
 config:
   cors:
-    allowed-origins: ${FRONTEND_ORIGIN:http://localhost:3000,http://localhost:8080}
+    allowed-origins: ${FRONTEND_ORIGIN:http://localhost,http://localhost:3000,http://localhost:8080}
 spring:
   application:
     name: hub
