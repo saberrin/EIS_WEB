@@ -19,15 +19,16 @@
 <script>
 export default {
   props: {
-    dispersionCoefficientRecords: {
+    averageImpedanceRecords: {
       type: Array,
       required: true
     }
   },
   watch: {
-    dispersionCoefficientRecords: {
+    averageImpedanceRecords: {
       handler(newVal, oldVal) {
-        console.log('new dispersion coefficient records observed ' + JSON.stringify(newVal))
+        console.log('new averageImpedanceRecords records observed ' + JSON.stringify(newVal),oldVal)
+        this.updateChartData(newVal);
       },
       immediate: true
     }
@@ -36,18 +37,8 @@ export default {
     return {
       config: {
         header: ['电池箱', '特征率', '阻抗值'],
-        data: [
-          ["PACK1", 'dev-2', "<span  class='colorRed'>↓33%</span>"],
-          ['pack1', 'dev-3', "<span  class='colorGrass'>↑100%</span>"],
-          ['pack1', 'rea-1', "<span  class='colorGrass'>↑94%</span>"],
-          ['pack1', 'rea-2', "<span  class='colorGrass'>↑95%</span>"],
-          ['pack1', 'fix-2', "<span  class='colorGrass'>↑63%</span>"],
-          ['pack1', 'fix-4', "<span  class='colorGrass'>↑84%</span>"],
-          ['pack1', 'fix-7', "<span  class='colorRed'>↓46%</span>"],
-          ['pack1', 'dev-2', "<span  class='colorRed'>↓13%</span>"],
-          ['pack1', 'dev-9', "<span  class='colorGrass'>↑76%</span>"]
-        ],
-        rowNum: 7, //表格行数
+        data: [],
+        rowNum: 8, //表格行数
         headerHeight: 35,
         headerBGC: '#0f1325', //表头
         oddRowBGC: '#0f1325', //奇数行
@@ -57,7 +48,63 @@ export default {
         align: ['center', 'center', 'center'] 
       }
     }
+  },
+  //不分组展示
+   // components: { centerRight2Chart1 }
+  // methods: {
+  //   updateChartData(records) {
+  //     // 这里的 records 是一个数组，其中包含每个 packId 和对应的 averageImpedanceRecords
+  //     const ChartData = records.map(record => {
+  //       return record.averageImpedanceRecords.map(item => {
+  //         return [
+  //           `pack${record.packId}`, 
+  //           item.frequency, 
+  //           `<span class='colorGrass'>${item.averageImpedance.toFixed(2)}%</span>` 
+  //         ];
+  //       });
+  //     }).flat(); 
+
+  //     this.config.data = ChartData; 
+  //   }
+  // }
+  methods: {
+  updateChartData(records) {
+    // 扁平化所有的数据，并按 frequency 分组
+    const groupedData = {};
+
+    // 遍历
+    records.forEach(record => {
+      record.averageImpedanceRecords.forEach(item => {
+        if (!groupedData[item.frequency]) {
+          groupedData[item.frequency] = [];
+        }
+
+        groupedData[item.frequency].push({
+          packId: `pack${record.packId}`,  
+          frequency: item.frequency,      
+          averageImpedance: item.averageImpedance.toFixed(2) 
+        });
+      });
+    });
+
+    // 按 frequency 排序频率
+    const sortedFrequencies = Object.keys(groupedData).sort((a, b) => a - b);
+
+    // 组装
+    const updateChartData = [];
+    sortedFrequencies.forEach(frequency => {
+      groupedData[frequency].forEach(item => {
+        updateChartData.push([
+          item.packId,               
+          item.frequency,          
+          `<span class='colorGrass'>${item.averageImpedance}%</span>`  // 阻抗值
+        ]);
+      });
+    });
+
+    this.config.data = updateChartData;  // 更新表格数据
   }
+}
 }
 </script>
 

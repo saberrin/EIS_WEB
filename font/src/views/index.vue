@@ -61,11 +61,13 @@
             </div>
             <!-- 中间 -->
             <div>
-              <centerRight2 :averageImpedanceRecords="averageImpedanceRecords" />
+              <!-- <centerRight2 :averageImpedanceRecords="averageImpedanceRecords" /> -->
+              <centerRight2 :dispersionCoefficientRecords="dispersionCoefficientRecords" />
             </div>
             <div>
               <dv-border-box-13>
-                <centerRight1 :dispersionCoefficientRecords="dispersionCoefficientRecords" />
+                <!-- <centerRight1 :dispersionCoefficientRecords="dispersionCoefficientRecords" /> -->
+                <centerRight1 :averageImpedanceRecords="averageImpedanceRecords" />
               </dv-border-box-13>
             </div>
           </div>
@@ -132,7 +134,7 @@ export default {
   mounted() {
     this.timeFn()
     this.cancelLoading()
-    axios.get('http://localhost:8080/api/v1/system-configuration')
+    axios.get('http://192.168.137.2:8080/api/v1/system-configuration')
       .then((response) => {
         this.systemConfiguration = response.data
         console.log('system configuration ' + JSON.stringify(this.systemConfiguration))
@@ -163,7 +165,7 @@ export default {
       const container = this.systemConfiguration.containers[this.currentContainer]
       const cluster = container.clusters[this.currentCluster]
       const packId = cluster.packs[this.currentPack]
-      axios.get(`http://localhost:8080/api/v1/containers/${container.id}/clusters/${cluster.id}/pack-metrics/${packId}`)
+      axios.get(`http://192.168.137.2:8080/api/v1/containers/${container.id}/clusters/${cluster.id}/pack-metrics/${packId}`)
         .then((response) => {
           let res = response.data
           this.packMeasurements = res.measurements
@@ -201,7 +203,7 @@ export default {
       for (let container of this.systemConfiguration.containers) {
         for (let cluster of container.clusters) {
           // Add each axios request to the array
-          let request = axios.get(`http://localhost:8080/api/v1/containers/${container.id}/clusters/${cluster.id}/pack-overviews`)
+          let request = axios.get(`http://192.168.137.2:8080/api/v1/containers/${container.id}/clusters/${cluster.id}/pack-overviews`)
             .then((response) => {
               let records = response.data.records
               records.forEach(record => {

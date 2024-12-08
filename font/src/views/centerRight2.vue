@@ -20,15 +20,16 @@
 
 export default {
   props: {
-    averageImpedanceRecords: {
+    dispersionCoefficientRecords: {
       type: Array,
       required: true
     }
   },
   watch: {
-    averageImpedanceRecords: {
+    dispersionCoefficientRecords: {
       handler(newVal, oldVal) {
-        console.log('new average impedance records observed ' + JSON.stringify(newVal))
+        console.log('new dispersionCoefficientRecordse records observed ' + JSON.stringify(newVal),oldVal)
+        this.updateChartData(newVal);
       },
       immediate: true
     }
@@ -37,19 +38,31 @@ export default {
     return {
       config: {
         data: [
-          { name: 'EIS1:', value: 200 },
-          { name: 'EIS2:', value: 67 },
-          { name: 'EIS3:', value: 123 },
-          { name: 'EIS4:', value: 55 },
-          { name: 'EIS5:', value: 88 },
-          { name: 'EIS6:', value: 90 },
-          { name: 'EIS7:', value: 40 },
-          { name: 'EIS8:', value: 60 },
-        ]
+          { name: 'Pack1:', value: 200 },
+          { name: 'Pack2:', value: 67 },
+          { name: 'Pack3:', value: 123 },
+          { name: 'Pack4:', value: 55 },
+          { name: 'Pack5:', value: 88 },
+          { name: 'Pack6:', value: 90 },
+          { name: 'Pack7:', value: 40 },
+          { name: 'Pack8:', value: 60 },
+        ],
       }
     }
   },
   // components: { centerRight2Chart1 }
+    methods: {
+    updateChartData(records) {
+      const limitedRecords = records.slice(0, 8);
+      const chartData = limitedRecords.map((record) => ({
+        name: `Pack ${record.packId}`,  
+        value: record.dispersionCoefficient
+      }));
+
+      this.config.data = chartData;
+      console.log('Updated chart config:', this.config); 
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
