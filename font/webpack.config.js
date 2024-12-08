@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
     entry: "./src/main.js",
@@ -46,6 +47,10 @@ module.exports = {
             template: "./public/index.html",
         }),
         new (require("vue-loader").VueLoaderPlugin)(),
+        new Dotenv({
+            path: '.env.production',
+            defaults: '.env.local'
+        })
     ],
     devServer: {
         static: {

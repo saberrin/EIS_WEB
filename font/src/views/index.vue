@@ -134,7 +134,7 @@ export default {
   mounted() {
     this.timeFn()
     this.cancelLoading()
-    axios.get('http://192.168.137.2:8080/api/v1/system-configuration')
+    axios.get(`${process.env.BACKEND_URL}/api/v1/system-configuration`)
       .then((response) => {
         this.systemConfiguration = response.data
         console.log('system configuration ' + JSON.stringify(this.systemConfiguration))
@@ -165,7 +165,7 @@ export default {
       const container = this.systemConfiguration.containers[this.currentContainer]
       const cluster = container.clusters[this.currentCluster]
       const packId = cluster.packs[this.currentPack]
-      axios.get(`http://192.168.137.2:8080/api/v1/containers/${container.id}/clusters/${cluster.id}/pack-metrics/${packId}`)
+      axios.get(`${process.env.BACKEND_URL}/api/v1/containers/${container.id}/clusters/${cluster.id}/pack-metrics/${packId}`)
         .then((response) => {
           let res = response.data
           this.packMeasurements = res.measurements
@@ -203,7 +203,7 @@ export default {
       for (let container of this.systemConfiguration.containers) {
         for (let cluster of container.clusters) {
           // Add each axios request to the array
-          let request = axios.get(`http://192.168.137.2:8080/api/v1/containers/${container.id}/clusters/${cluster.id}/pack-overviews`)
+          let request = axios.get(`${process.env.BACKEND_URL}/api/v1/containers/${container.id}/clusters/${cluster.id}/pack-overviews`)
             .then((response) => {
               let records = response.data.records
               records.forEach(record => {

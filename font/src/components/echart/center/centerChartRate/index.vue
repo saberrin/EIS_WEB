@@ -46,7 +46,7 @@ export default {
   methods: {
     fetchData() {
       axios
-        .get('http://192.168.137.2:8080/api/v1/overview')
+        .get(`${process.env.BACKEND_URL}/api/v1/overview`)
         .then((response) => {
           const data = response.data;
 
