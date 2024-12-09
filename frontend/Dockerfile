@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Copy package files and install dependencies
 COPY package*.json ./
-RUN npm install cnpm -g
+RUN npm install cnpm -g --registry=https://registry.npmmirror.com
 RUN cnpm install
 
 # Copy project files
