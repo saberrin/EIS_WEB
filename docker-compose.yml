@@ -2,8 +2,6 @@ services:
   frontend:
     build:
       context: ./frontend
-      args:
-        - BACKEND_URL=http://localhost:8080
     container_name: hub_frontend
     depends_on:
       - server
@@ -26,6 +24,7 @@ services:
       - db
     environment:
       - DATABASE_URL=db:5432
+      - FRONTEND_ORIGIN
     logging:
       driver: "json-file"
       options:
