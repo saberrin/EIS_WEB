@@ -13,12 +13,14 @@
 # sudo service docker start
 
 HOSTNAME=""
+ORIGIN=""
 
 # Use getopts to parse flags
 while getopts "h:" opt; do
   case ${opt} in
     h)
       HOSTNAME=$OPTARG
+      ORIGIN=$OPTARG
       ;;
     *)
       echo "Usage: $0 [-h hostname]"
@@ -32,4 +34,4 @@ if [ -z "$HOSTNAME" ]; then
 fi
 
 docker compose build --build-arg BACKEND_URL=http://$HOSTNAME:8080
-FRONTEND_ORIGIN="http://$HOSTNAME" docker compose up -d
+FRONTEND_ORIGIN="http://$ORIGIN,http://localhost" docker compose up -d
