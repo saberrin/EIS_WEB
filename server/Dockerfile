@@ -1,4 +1,4 @@
-FROM gradle:8-jdk17 AS builder
+FROM ${DOCKER_REGISTRY}/gradle:8-jdk17 AS builder
 
 WORKDIR /builder
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN ./gradlew build --no-daemon
 
-FROM openjdk:17-jdk-slim
+FROM ${DOCKER_REGISTRY}/openjdk:17-jdk-slim
 
 WORKDIR /app
 

@@ -42,7 +42,7 @@ services:
           memory: 512M
 
   db:
-    image: postgres:14
+    image: ${DOCKER_REGISTRY}/postgres:14
     container_name: postgres_db
     environment:
       POSTGRES_USER: xdra
