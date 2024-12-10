@@ -8,7 +8,7 @@ check_docker_daemon() {
     systemctl is-active --quiet docker
 }
 
-if which docker &> /dev/null
+if command -v docker &> /dev/null
 then
   echo "Docker already installed, skip installing"
   echo "Checking Docker daemon status..."
