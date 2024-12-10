@@ -1,3 +1,5 @@
+ARG DOCKER_REGISTRY
+
 FROM ${DOCKER_REGISTRY}/gradle:8-jdk17 AS builder
 
 WORKDIR /builder

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # 安装docker： https://help.aliyun.com/zh/ecs/use-cases/install-and-use-docker-on-a-linux-ecs-instance#8dca4cfa3dn0e
 # 设置docker仓库镜像：https://cloud.tencent.com/developer/article/2471124
@@ -68,5 +68,5 @@ if [ -z "$ORIGIN" ]; then
   ORIGIN=$HOSTNAME
 fi
 
-docker compose build --build-arg BACKEND_URL=http://$HOSTNAME:8080 DOCKER_REGISTRY=$REGISTRY
+docker compose build --build-arg BACKEND_URL=http://$HOSTNAME:8080 --build-arg DOCKER_REGISTRY=$REGISTRY
 FRONTEND_ORIGIN="http://$ORIGIN" docker compose up -d
