@@ -10,22 +10,23 @@ check_docker_daemon() {
 
 if which docker &> /dev/null
 then
-  echo "docker environment ready, skip installing"
+  echo "Docker already installed, skip installing"
   echo "Checking Docker daemon status..."
   if check_docker_daemon; then
       echo "Docker daemon is already running."
   else
-      echo "Docker daemon is not running."
+      echo "Docker daemon is not running. starting"
       systemctl start docker
+      echo "Docker daemon started"
   fi
 else
-  echo "docker is missing, start installing"
+  echo "Docker is missing, start installing"
   apt-get update
   apt-get -y install apt-transport-https ca-certificates curl software-properties-common
-  curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+  curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | apt-key add -
   add-apt-repository -y "deb [arch=$(dpkg --print-architecture)] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
   
-  echo "package source prepared"
+  echo "Package source prepared"
 
   apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   systemctl start docker
@@ -64,7 +65,7 @@ if [ -z "$REGISTRY" ]; then
   REGISTRY="docker.unsee.tech"
 fi
 if [ -z "$ORIGIN" ]; then
-  ORIGIN="localhost"
+  ORIGIN=$HOSTNAME
 fi
 
 docker compose build --build-arg BACKEND_URL=http://$HOSTNAME:8080 DOCKER_REGISTRY=$REGISTRY
