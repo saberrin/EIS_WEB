@@ -1,5 +1,7 @@
 # EIS_WEB
 
+`cd /path/to/EIS_WEB`
+
 ## Production Setup
 To start the project in a production-like environment: `sudo ./bootstrap -h <server IP address> -r <working Docker registry>`
 
