@@ -3,9 +3,21 @@
 # 安装docker： https://help.aliyun.com/zh/ecs/use-cases/install-and-use-docker-on-a-linux-ecs-instance#8dca4cfa3dn0e
 # 设置docker仓库镜像：https://cloud.tencent.com/developer/article/2471124
 
+# Function to check the status of the Docker daemon
+check_docker_daemon() {
+    systemctl is-active --quiet docker
+}
+
 if which docker &> /dev/null
 then
   echo "docker environment ready, skip installing"
+  echo "Checking Docker daemon status..."
+  if check_docker_daemon; then
+      echo "Docker daemon is already running."
+  else
+      echo "Docker daemon is not running."
+      systemctl start docker
+  fi
 else
   echo "docker is missing, start installing"
   apt-get update
