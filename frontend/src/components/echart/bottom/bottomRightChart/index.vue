@@ -1,20 +1,20 @@
 <template>
   <div class="module-container">
     <div class="left-section">
+      <!-- 蓝色圆环 -->
       <div class="circle-container">
-        <!-- 蓝色圆环 -->
         <div class="circle" :style="getCircleStyle(50, 'lightblue')">
           <span class="percentage-text">50%</span>
         </div>
       </div>
+      <!-- 橙色圆环 -->
       <div class="circle-container">
-        <!-- 橙色圆环 -->
         <div class="circle" :style="getCircleStyle(30, 'orange')">
           <span class="percentage-text">30%</span>
         </div>
       </div>
     </div>
-    
+
     <div class="right-section">
       <div class="radar-chart">
         <RadarChart :data="radarData" />
@@ -27,36 +27,60 @@
 </template>
 
 <script>
-import RadarChart from "./RadarChart"; // 雷达图组件
-import LineChart from "./LineChart"; // 折线图组件
+import RadarChart from "./RadarChart"; // 引入雷达图组件
+import LineChart from "./LineChart"; // 引入折线图组件
 
 export default {
+  props: {
+    packMetrics: {
+      type: Object,
+      required: true, // cdata 从父组件传递进来
+    },
+  },
   components: {
     RadarChart,
-    LineChart,
+    LineChart
   },
   data() {
     return {
-      // 雷达图数据：最大值和最小值
+      // 初始化雷达图数据
       radarData: {
-        maxData: [80, 70, 90, 85, 60, 75], // 最大值数据
-        minData: [40, 30, 50, 45, 20, 35], // 最小值数据
+        maxData: [],
+        minData: []
       },
-      // 折线图数据
+      // 初始化折线图数据
       lineData: {
-        dates: ["2024-11-01", "2024-11-02", "2024-11-03", "2024-11-04", "2024-11-05"],
-        values: [10, 50, 55, 20, 65],
-      },
+        dates: [],
+        values: []
+      }
     };
   },
+  watch: {
+    // 监听父组件传递的 packMetrics 数据变化
+    packMetrics: {
+      handler(newVal) {
+        if (newVal) {
+          // 更新雷达图数据
+          if (newVal.diagnostics) {
+            this.radarData.maxData = Object.values(newVal.diagnostics.max || {});
+            this.radarData.minData = Object.values(newVal.diagnostics.min || {});
+          }
+
+          // 更新折线图数据
+          this.lineData.dates = newVal.packHealthHistory.map((item) => item.creationTime);
+          this.lineData.values = newVal.packHealthHistory.map((item) => item.safetyRate);
+        }
+      },
+      immediate: true  // 初次渲染时立即调用 handler
+    }
+  },
   methods: {
-    // 动态生成圆环的边框样式
+    // 动态生成圆环的样式
     getCircleStyle(percentage, color) {
-      // 获取更浅的颜色
       const lightColor = this.getLightenedColor(color);
       return {
-        background: "transparent", // 确保圆环内部透明
-        border: `6px solid ${lightColor}`, // 设置边框颜色为更浅的颜色
+        background: "transparent",
+        border: `6px solid ${lightColor}`
       };
     },
     // 获取更浅的颜色
@@ -66,8 +90,8 @@ export default {
         orange: 'rgb(255, 179, 71)', // 浅橙色
       };
       return colorMap[color] || color;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -76,15 +100,15 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 20px;
-  height: 100%; /* 使整个模块充满父容器的高度 */
+  height: 100%; 
 }
 
 .left-section {
   width: 30%;
   display: flex;
-  justify-content: space-between; /* 左侧容器内并排显示圆环 */
-  align-items: flex-start; /* 调整圆环位于模块左上角 */
-  flex-direction: row; /* 确保圆环水平排列 */
+  justify-content: space-between; 
+  align-items: flex-start; 
+  flex-direction: row; 
 }
 
 .circle-container {
@@ -94,8 +118,8 @@ export default {
 .circle {
   width: 100px;
   height: 100px;
-  border-radius: 50%; /* 确保圆形 */
-  background-color: transparent; /* 圆环内部透明 */
+  border-radius: 50%; 
+  background-color: transparent; 
   position: relative;
   display: flex;
   justify-content: center;

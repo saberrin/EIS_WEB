@@ -16,7 +16,7 @@
        
       </div>
       <div>
-        <BottomRightChart />
+        <BottomRightChart  :packMetrics="packMetrics" />
       </div>
     </div>
   </div>

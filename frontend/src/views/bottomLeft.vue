@@ -10,33 +10,64 @@
         </div>
       </div>
       <div>
-        <BottomLeftChart />
+        <BottomLeftChart :cdata="cdata" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import BottomLeftChart from '@/components/echart/bottom/bottomLeftChart'
+import BottomLeftChart from '@/components/echart/bottom/bottomLeftChart';
 export default {
   props: {
     packMeasurements: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
+  },
+  data() {
+    return {
+      cdata: {
+        category: [],
+        lineData: [],
+        barData: [],
+        rateData: [],
+      },
+    };
   },
   watch: {
     packMeasurements: {
-      handler(newVal, oldVal) {
-        console.log('new measurements observed')
+      handler(newVal) {
+        console.log('New measurements observed:', newVal);
+        this.processPackMeasurements(newVal); // 处理传入的数据
       },
-      immediate: true
-    }
+      immediate: true,
+    },
+  },
+  methods: {
+    // 处理 packMeasurements 数据并映射到 cdata
+    processPackMeasurements(measurements) {
+      if (!Array.isArray(measurements)) return;
+      this.cdata.category = measurements.map((item) => item.cellId || 'N/A');
+      this.cdata.lineData = measurements.map((item) => item.imaginaryImpedance || 0);
+      this.cdata.barData = measurements.map((item) => item.realImpedance|| 0);
+      // this.cdata.category = measurements.map((item) => item.imaginaryImpedance || 0);
+      // this.cdata.barData = measurements.map((item) => item.realImpedance || 0);
+      
+      // 计算 rateData
+      this.cdata.rateData = [];
+      for (let i = 0; i < this.cdata.barData.length; i++) {
+        const rate =
+          this.cdata.lineData[i] > 0
+            ? (this.cdata.barData[i] / this.cdata.lineData[i]).toFixed(2): 0;
+        this.cdata.rateData.push(rate);
+      }
+    },
   },
   components: {
-    BottomLeftChart
-  }
-}
+    BottomLeftChart,
+  },
+};
 </script>
 
 <style lang="scss" scoped>

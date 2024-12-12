@@ -86,7 +86,7 @@ export default {
         {
           title: "累计排查隐患次数",
           number: {
-            number: [this],
+            number: [0],
             toFixed: 1,
             textAlign: "left",
             content: "{nt}",

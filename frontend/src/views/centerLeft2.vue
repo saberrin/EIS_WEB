@@ -12,7 +12,6 @@
       <div class="d-flex jc-center body-box">
         <div class="dv-scr-board">
           <div class="carousel-wrapper">
-            <!-- Display all items without hiding -->
             <div
               v-for="(item, index) in carouselItems"
               :key="index"
@@ -25,6 +24,7 @@
     </div>
   </div>
 </template>
+
 <script>
 export default {
   props: {
@@ -34,49 +34,45 @@ export default {
     }
   },
   watch: {
-    currentPack: {
-      handler(newVal, oldVal) {
-        console.log('new pack index observed ' + newVal)
-      },
-      immediate: true
+    currentPack(newVal) {
+      console.log('Received new currentPack:', newVal);
+      this.updateCarouselIndex(newVal);
     }
   },
   data() {
     return {
-      currentIndex: 0, // Current highlighted index
-      carouselItems: [
-        '数据1', '数据2', '数据3', '数据4',
-        '数据5', '数据6', '数据7', '数据8'
-      ],
-      timer: null // Timer for automatic highlight change
+      currentIndex: 0, // Track the active item
+      carouselItems: ["Pack 0", "Pack 1", "Pack 2", "Pack 3", "Pack 4", "Pack 5", "Pack 6", "Pack 7"], // Static packs
     };
   },
   methods: {
-    // Start auto highlight switching
-    startAutoPlay() {
-      this.timer = setInterval(() => {
-        this.nextItem();
-      }, 2000); // Highlight changes every 2 seconds
+    // Update the index when the currentPack changes
+    updateCarouselIndex(packId) {
+      if (packId >= 0 && packId < this.carouselItems.length) {
+        this.currentIndex = packId; 
+      }
     },
-    nextItem() {
-      this.currentIndex = (this.currentIndex + 1) % this.carouselItems.length;
-    }
   },
+
   mounted() {
-    this.startAutoPlay(); // Start on load
+    // Initialize with the currentPack value from the parent
+    this.updateCarouselIndex(this.currentPack);
   },
+
   beforeDestroy() {
-    clearInterval(this.timer); // Clear timer on component destroy
+    // Clear the interval if any set before destroying the component
+    clearInterval(this.timer); 
   }
 };
 </script>
+
 <style lang="scss" scoped>
 $box-height: 410px;
 $box-width: 360px;
 $highlight-color: #37a2da;
 $bg-dark: #1a1d2e;
 $bg-light: #0f1325;
-$carousel-bg-color: #2b3a4f; // Opaque background color for the carousel items
+$carousel-bg-color: #2b3a4f;
 
 #centerRight1 {
   padding: 16px;
@@ -86,7 +82,7 @@ $carousel-bg-color: #2b3a4f; // Opaque background color for the carousel items
   border-radius: 10px;
   background: linear-gradient(135deg, $bg-dark, $bg-light);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  border: 3px solid $highlight-color; /* Thicker border around the container */
+  border: 3px solid $highlight-color;
 
   .bg-color-black {
     height: $box-height - 30px;
@@ -124,7 +120,7 @@ $carousel-bg-color: #2b3a4f; // Opaque background color for the carousel items
     border-radius: 8px;
     background-color: rgba(0, 0, 0, 0.5);
     overflow: hidden;
-    border: 3px solid $highlight-color; /* Thicker border around the carousel container */
+    border: 3px solid $highlight-color;
   }
 
   .carousel-wrapper {
@@ -140,7 +136,7 @@ $carousel-bg-color: #2b3a4f; // Opaque background color for the carousel items
     display: flex;
     justify-content: center;
     align-items: center;
-    background: $carousel-bg-color; /* Opaque background color for items */
+    background: $carousel-bg-color;
     color: white;
     font-weight: bold;
     opacity: 0.9;
@@ -149,10 +145,10 @@ $carousel-bg-color: #2b3a4f; // Opaque background color for the carousel items
   }
 
   .active {
-    background: $highlight-color; /* Highlight color for active item */
-    font-size: 18px; /* Slightly larger font for emphasis */
-    transform: scale(1.05); /* Slightly scales the active item */
-    box-shadow: 0 4px 10px rgba(55, 162, 218, 0.6); /* Subtle glow */
+    background: $highlight-color;
+    font-size: 18px;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(55, 162, 218, 0.6);
     opacity: 1;
   }
 }
