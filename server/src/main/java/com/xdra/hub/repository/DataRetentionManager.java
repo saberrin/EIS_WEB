@@ -1,5 +1,6 @@
 package com.xdra.hub.repository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ public class DataRetentionManager {
 
     private final DataSource dataSource;
 
+    @PostConstruct
     public void createTablePartitions() {
         log.info("preparing table partitions");
 

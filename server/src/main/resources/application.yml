@@ -1,7 +1,7 @@
 server:
   port: 8080
   tomcat:
-    max-http-post-size: 10MB
+    max-http-post-size: 150MB
 config:
   cors:
     allowed-origins: ${FRONTEND_ORIGIN:http://localhost,http://localhost:3000,http://localhost:8080}
