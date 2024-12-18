@@ -48,7 +48,7 @@ export default {
     // 处理 packMeasurements 数据并映射到 cdata
     processPackMeasurements(measurements) {
       if (!Array.isArray(measurements)) return;
-      this.cdata.category = measurements.map((item) => item.cellId || 'N/A');
+      this.cdata.category = measurements.map((item) => item.realImpedance || 'N/A');
       this.cdata.lineData = measurements.map((item) => item.imaginaryImpedance || 0);
       this.cdata.barData = measurements.map((item) => item.realImpedance|| 0);
       // this.cdata.category = measurements.map((item) => item.imaginaryImpedance || 0);
@@ -59,7 +59,7 @@ export default {
       for (let i = 0; i < this.cdata.barData.length; i++) {
         const rate =
           this.cdata.lineData[i] > 0
-            ? (this.cdata.barData[i] / this.cdata.lineData[i]).toFixed(2): 0;
+            ? (this.cdata.lineData[i] * -1 / this.cdata.barData[i]).toFixed(2): 0;
         this.cdata.rateData.push(rate);
       }
     },
