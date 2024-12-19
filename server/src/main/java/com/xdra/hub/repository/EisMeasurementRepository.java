@@ -17,8 +17,9 @@ public interface EisMeasurementRepository extends JpaRepository<EisMeasurementEn
             "ON a.pack_id=b.pack_id and a.creation_time = b.max_creation_time", nativeQuery = true)
     List<EisMeasurementEntity> getLatestRecordsGroupByPackId(List<Long> packIds, Instant createdAfter);
 
-    @Query(value = "select * from eis_measurement where pack_id = ?1 and creation_time = " +
-            "(select creation_time from eis_measurement where pack_id = ?1 and creation_time > ?2 order by creation_time desc limit 1)", nativeQuery = true)
+    @Query(value = "select em.* from eis_measurement em join " +
+            "(select cell_id, max(creation_time) as max_creation_time from eis_measurement where pack_id = ?1 and creation_time > ?2 group by cell_id) lm " +
+            "on em.cell_id = lm.cell_id and em.creation_time = lm.max_creation_time", nativeQuery = true)
     List<EisMeasurementEntity> getPackLatestRecords(long packId, Instant createdAfter);
 
     @Query(value = "select new com.xdra.hub.analytics.StatsDto(count(distinct m.creationTime) as totalInspections, count(1) as totalMeasurements) from EisMeasurementEntity m where m.creationTime >= ?1 and m.creationTime < ?2")
