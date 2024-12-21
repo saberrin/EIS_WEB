@@ -44,26 +44,16 @@ export default {
       immediate: true,
     },
   },
-  methods: {
-    // 处理 packMeasurements 数据并映射到 cdata
-    processPackMeasurements(measurements) {
-      if (!Array.isArray(measurements)) return;
-      this.cdata.category = measurements.map((item) => item.realImpedance || 'N/A');
-      this.cdata.lineData = measurements.map((item) => item.imaginaryImpedance || 0);
-      this.cdata.barData = measurements.map((item) => item.realImpedance|| 0);
-      // this.cdata.category = measurements.map((item) => item.imaginaryImpedance || 0);
-      // this.cdata.barData = measurements.map((item) => item.realImpedance || 0);
-      
-      // 计算 rateData
-      this.cdata.rateData = [];
-      for (let i = 0; i < this.cdata.barData.length; i++) {
-        const rate =
-          this.cdata.lineData[i] > 0
-            ? (this.cdata.lineData[i] * -1 / this.cdata.barData[i]).toFixed(2): 0;
-        this.cdata.rateData.push(rate);
-      }
-    },
+
+methods: {
+  processPackMeasurements(measurements) {
+    if (!Array.isArray(measurements)) return;
+    // 设置 x 轴为 realImpedance 和 y 轴为 imaginaryImpedance * -1
+    this.cdata.category = measurements.map((item) => item.realImpedance || 'N/A');
+    this.cdata.rateData = measurements.map((item) => item.imaginaryImpedance * -1 || 0);
   },
+},
+
   components: {
     BottomLeftChart,
   },

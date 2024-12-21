@@ -44,7 +44,7 @@ export default {
             }
           },
           legend: {
-            data: [ "已贯通", "计划贯通","贯通率",],
+            data: [ "已贯通", "计划贯通","eis",],
             textStyle: {
               color: "#B4B4B4"
             },
@@ -68,6 +68,7 @@ export default {
           },
           yAxis: [
             {
+              position: "left", 
               splitLine: { show: false },
               axisLine: {
                 lineStyle: {
@@ -91,43 +92,9 @@ export default {
               }
             }
           ],
-          series: [
-           
-            // {
-            //   // name: "已贯通",
-            //   type: "bar",
-            //   barWidth: 10,
-            //   itemStyle: {
-            //     normal: {
-            //       barBorderRadius: 5,
-            //       color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            //         { offset: 0, color: "#956FD4" },
-            //         { offset: 1, color: "#3EACE5" }
-            //       ])
-            //     }
-            //   },
-            //   data: newData.barData
-            // },
-            // {
-            //   // name: "计划贯通",
-            //   type: "bar",
-            //   barGap: "-100%",
-            //   barWidth: 10,
-            //   itemStyle: {
-            //     normal: {
-            //       barBorderRadius: 5,
-            //       color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            //         { offset: 0, color: "rgba(156,107,211,0.8)" },
-            //         { offset: 0.2, color: "rgba(156,107,211,0.5)" },
-            //         { offset: 1, color: "rgba(156,107,211,0.2)" }
-            //       ])
-            //     }
-            //   },
-            //   z: -12,
-            //   data: newData.lineData
-            // },
-             {
-              name: "贯通率",
+        series: [
+            {
+              name: "eis",
               type: "line",
               smooth: true,
               showAllSymbol: true,
@@ -139,9 +106,10 @@ export default {
                   color: "#F02FC2"
                 }
               },
-              data: newData.rateData
+              data: newData.rateData, 
             },
-          ]
+          ],
+
         }
       },
       immediate: true,
