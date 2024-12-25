@@ -49,6 +49,7 @@ methods: {
   processPackMeasurements(measurements) {
     if (!Array.isArray(measurements)) return;
     // 设置 x 轴为 realImpedance 和 y 轴为 imaginaryImpedance * -1
+    measurements.sort((a, b) => a.realImpedance - b.realImpedance);
     this.cdata.category = measurements.map((item) => item.realImpedance || 'N/A');
     this.cdata.rateData = measurements.map((item) => item.imaginaryImpedance * -1 || 0);
   },
