@@ -101,6 +101,11 @@ export default {
               symbol: "emptyCircle",
               symbolSize: 8,
               yAxisIndex: 1,
+              lineStyle: {
+              normal: {
+              width: 0  // 设置线宽为0，移除连线
+                      }
+                     },
               itemStyle: {
                 normal: {
                   color: "#F02FC2"
