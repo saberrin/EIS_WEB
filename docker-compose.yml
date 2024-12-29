@@ -7,6 +7,7 @@ services:
       - server
     ports:
       - "80:80"
+    restart: always
     deploy:
       resources:
         limits:
@@ -34,6 +35,7 @@ services:
         max-file: "5"
     ports:
       - "8080:8080"
+    restart: always
     deploy:
       resources:
         limits:
@@ -54,6 +56,7 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    restart: always
     deploy:
       resources:
         limits:
