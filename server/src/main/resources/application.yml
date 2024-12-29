@@ -11,7 +11,7 @@ spring:
   datasource:
     url: jdbc:postgresql://${DATABASE_URL:localhost:5432}/xdra?reWriteBatchedInserts=true
     username: xdra
-    password: Test!123
+    password: ${DATABASE_PASSWORD:Test!123}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 100
