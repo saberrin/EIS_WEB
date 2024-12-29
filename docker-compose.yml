@@ -24,8 +24,9 @@ services:
       - db
     environment:
       - DATABASE_URL=db:5432
+      - DATABASE_PASSWORD=${POSTGRES_PASSWORD}
       - FRONTEND_ORIGIN
-      - DATABASE_PASSWORD
+    env_file: .env
     logging:
       driver: "json-file"
       options:
@@ -47,8 +48,8 @@ services:
     container_name: postgres_db
     environment:
       POSTGRES_USER: xdra
-      POSTGRES_PASSWORD: Test!123
       POSTGRES_DB: xdra
+    env_file: .env
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
