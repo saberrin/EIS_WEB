@@ -37,7 +37,7 @@ export default {
   },
   watch: {
     packMeasurements: {
-      handler(newVal) {
+      handler(newVal, oldVal) {
         console.log('New measurements observed:', newVal);
         this.processPackMeasurements(newVal); // 处理传入的数据
       },
@@ -47,11 +47,11 @@ export default {
 
 methods: {
   processPackMeasurements(measurements) {
-    if (!Array.isArray(measurements)) return;
+    if (!Array.isArray(measurements)) {console.log("not array");return;}
     // 设置 x 轴为 realImpedance 和 y 轴为 imaginaryImpedance * -1
-    measurements.sort((a, b) => a.realImpedance - b.realImpedance);
-    this.cdata.category = measurements.map((item) => item.realImpedance || 'N/A');
-    this.cdata.rateData = measurements.map((item) => item.imaginaryImpedance * -1 || 0);
+    const sortedMeasurements = [...measurements].sort((a, b) => a.realImpedance - b.realImpedance);
+    this.cdata.category = sortedMeasurements.map((item) => item.realImpedance || 'N/A');
+    this.cdata.rateData = sortedMeasurements.map((item) => item.imaginaryImpedance * -1 || 0);
   },
 },
 
