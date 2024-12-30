@@ -25,21 +25,23 @@ public class AnalyticsService {
 
     public void calculateMonthlyStats() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
-        ZonedDateTime now = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
-        String yearMonth = formatter.format(now);
+        ZonedDateTime currentMonthStart = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
+        ZonedDateTime lastMonthStart = currentMonthStart.minusMonths(1);
 
+        String yearMonth = formatter.format(lastMonthStart);
         log.info("calculating monthly statistics triggered for {}", yearMonth);
 
+        // calculate stats of last month, only need to do once
         if (!monthlyStatsRepository.existsByYearMonth(yearMonth)) {
-            log.info("monthly statistics for {} not found, calculating", yearMonth);
-            Instant start = now.minusMonths(1).toInstant();
-            Instant end = now.toInstant();
+            log.info("monthly statistics {} not found, calculating", yearMonth);
+            Instant start = lastMonthStart.toInstant();
+            Instant end = currentMonthStart.toInstant();
             StatsDto stats = eisMeasurementRepository.getStatsByCreationTimeBetween(start, end);
             log.info("year month: {}, total measurements: {}, total inspections: {}", yearMonth, stats.getTotalMeasurements(), stats.getTotalInspections());
             MonthlyStatsEntity statsEntity = MonthlyStatsEntity.builder()
                     .yearMonth(yearMonth)
                     .totalMeasurements(stats.getTotalMeasurements())
-                    .totalInspections((int) stats.getTotalInspections())
+                    .totalInspections((int) stats.getTotalInspections().longValue())
                     .build();
             monthlyStatsRepository.upsert(statsEntity);
         }
@@ -52,7 +54,7 @@ public class AnalyticsService {
         Overview overview = new Overview();
         overview.setTotalInspections(historicalStats.getTotalInspections() + currentStats.getTotalInspections());
         overview.setTotalMeasurements(historicalStats.getTotalMeasurements() + currentStats.getTotalMeasurements());
-        overview.setMonthlyInspections((int) currentStats.getTotalInspections());
+        overview.setMonthlyInspections((int) currentStats.getTotalInspections().longValue());
         return overview;
     }
 }

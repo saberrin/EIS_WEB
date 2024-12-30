@@ -94,12 +94,11 @@ public class TransmissionService {
                 .build();
         TransmitDataRequest request = new TransmitDataRequest();
         List<EisMeasurement> measurements = new ArrayList<>(7 * 2 * 8 * 52 * 3);
-        OffsetDateTime creationTime = OffsetDateTime.now();
+        OffsetDateTime creationTime = OffsetDateTime.now().minusDays(3);
         Random random = new Random();
         List<Double> frequencies = List.of(1000.0, 2000.0, 3000.0);
         // 3 days
         for (int a = 0; a < 3; a++) {
-            creationTime = creationTime.plusDays(1);
             // 2 clusters
             for (int b = 0; b < 2; b++) {
                 // 8 packs
@@ -123,6 +122,8 @@ public class TransmissionService {
                     }
                 }
             }
+
+            creationTime = creationTime.plusDays(1);
         }
         request.setEisMeasurements(measurements);
 
@@ -130,7 +131,6 @@ public class TransmissionService {
         List<GeneratedRecord> generatedRecords = new ArrayList<>(2 * 8 * 52);
         // 3 days
         for (int a = 0; a < 3; a++) {// 2 clusters
-            creationTime = creationTime.plusDays(1);
             for (int b = 0; b < 2; b++) {
                 // 8 packs
                 for (int c = 0; c < 8; c++) {
@@ -153,6 +153,7 @@ public class TransmissionService {
                     }
                 }
             }
+            creationTime = creationTime.plusDays(1);
         }
         request.setGeneratedRecords(generatedRecords);
 

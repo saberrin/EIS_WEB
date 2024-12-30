@@ -23,7 +23,6 @@ spring:
       hibernate:
         jdbc:
           batch_size: 200
-        show_sql: true
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true

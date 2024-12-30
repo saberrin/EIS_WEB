@@ -6,6 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class StatsDto {
-    private long totalInspections;
-    private long totalMeasurements;
+    private Long totalInspections;
+    private Long totalMeasurements;
 }
