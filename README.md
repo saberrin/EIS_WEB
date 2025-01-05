@@ -1,15 +1,37 @@
-# EIS_WEB
+# Production Setup
+Server OS: Ubuntu Server + Xubuntu Desktop
+## Build
+1. Run `./build.sh` to build images and export them as tarballs.
+2. Copy the tarball files and `docker-compose.yml` to a USB drive.
 
-`cd /path/to/EIS_WEB`
+## Deploy
+1. Run `sudo ./bootstrap.sh` to install necessary software on the server.
+2. Copy the image tarballs and `docker-compose.yml` from the USB drive.
+3. Load the images by executing `sudo docker load -i <tarball file name>`.
+4. Create a `.env` file in the same directory as `docker-compose.yml`. The content of the `.env` file is as follows.
+```
+POSTGRES_PASSWORD=<db password>
+FRONTEND_ORIGIN=192.168.1.2
+```
+5. Execute `sudo docker compose up -d` in the same directory as `docker-compose.yml`.
 
-## Production Setup
-To start the project in a production-like environment: `sudo ./bootstrap -h <server IP address> -r <working Docker registry>`
+## Network Configuration
+1. Configure a static IP address for the server by creating a file named `01-netcfg.yaml` in `/etc/netplan` directory containing the content below.
+```yaml
+network:
+  version: 2
+  ethernets:
+    enp2s0: # adjust network interface name as needed
+      dhcp4: no
+      addresses:
+        - 192.168.1.2/24
+```
+2. Execute `sudo netplan apply`.
 
-For example, `sudo ./bootstrap -h 192.168.3.4 -r docker.unsee.tech`
+## Verification
+Open browser, enter `192.168.1.2` in the address bar, hit enter, and check if the page is displayed as expected.
 
-By default *docker.unsee.tech* is used as the Docker registry, but in case the Docker registry is not working, use another one and modify the docker registry in the *.env* file.
-
-## Development Setup
-For frontend dashboard developers who need to access server API from remote, `sudo ./bootstrap -h <server IP address> -o <comma-separated list of CORS allowed origins> -r <working Docker registry>`
-
-For example, `sudo ./bootstrap -h 192.168.3.4 -o localhost:8080,localhost:3000 -r docker.unsee.tech`
+# Development Setup
+1. Go to the server directory: `cd /path/to/EIS_WEB/server`.
+2. Execute `sudo docker compose up -d`
+3. The server should be available at `http://localhost:8080`

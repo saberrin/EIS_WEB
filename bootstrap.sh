@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # 安装docker： https://help.aliyun.com/zh/ecs/use-cases/install-and-use-docker-on-a-linux-ecs-instance#8dca4cfa3dn0e
-# 设置docker仓库镜像：https://cloud.tencent.com/developer/article/2471124
 
 # Function to check the status of the Docker daemon
 check_docker_daemon() {
@@ -35,38 +34,4 @@ else
   echo "docker installed"
 fi
 
-HOSTNAME=""
-ORIGIN=""
-REGISTRY=""
-
-# Use getopts to parse flags
-while getopts "h:o:r:" opt; do
-  case ${opt} in
-    h)
-      HOSTNAME=$OPTARG
-      ;;
-    o)
-      ORIGIN=$OPTARG
-      ;;
-    r)
-      REGISTRY=$OPTARG
-      ;;
-    *)
-      echo "Usage: $0 [-h hostname] [-o origins] [-r docker-registry]"
-      exit 1
-      ;;
-  esac
-done
-
-if [ -z "$HOSTNAME" ]; then
-  HOSTNAME="localhost"
-fi
-if [ -z "$REGISTRY" ]; then
-  REGISTRY="docker.unsee.tech"
-fi
-if [ -z "$ORIGIN" ]; then
-  ORIGIN=$HOSTNAME
-fi
-
-docker compose build --build-arg BACKEND_URL=http://$HOSTNAME:8080 --build-arg DOCKER_REGISTRY=$REGISTRY
-FRONTEND_ORIGIN="http://$ORIGIN" docker compose up -d
+apt-get install postgresql

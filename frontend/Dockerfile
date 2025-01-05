@@ -1,7 +1,4 @@
-ARG DOCKER_REGISTRY
-
-# Stage 1: Build the Vue application
-FROM ${DOCKER_REGISTRY}/node:22 AS build-stage
+FROM node:22 AS build-stage
 WORKDIR /app
 
 # Copy package files and install dependencies
@@ -20,7 +17,7 @@ RUN echo "BACKEND_URL=$BACKEND_URL" > .env.production
 RUN npm run build
 
 # Stage 2: Serve with Nginx
-FROM ${DOCKER_REGISTRY}/nginx:alpine
+FROM nginx:alpine
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
