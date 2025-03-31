@@ -25,7 +25,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SystemConfiguration"
-  /containers/{containerId}/clusters/{clusterId}/pack-metrics/{packId}:
+  /containers/{containerId}/pack-metrics:
+    get:
+      tags:
+        - Dashboard
+      operationId: getContainerPackMetrics
+      description: get the metrics of all packs in a container
+      parameters:
+        - $ref: "#/components/parameters/containerId"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContainerPackMetricsResponse"
+  /containers/{containerId}/pack-metrics/{packId}:
     get:
       tags:
         - Dashboard
@@ -33,7 +48,6 @@ paths:
       operationId: getPackMetrics
       parameters:
         - $ref: "#/components/parameters/containerId"
-        - $ref: "#/components/parameters/clusterId"
         - $ref: "#/components/parameters/packId"
       responses:
         "200":
@@ -42,22 +56,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PackMetricsResponse"
-  /containers/{containerId}/clusters/{clusterId}/pack-overviews:
+  /containers/{containerId}/packs/{packId}/cells-metrics/{cellId}:
     get:
       tags:
         - Dashboard
-      summary: Get the metrics of all packs in a cluster
-      operationId: listPackOverviews
+      summary: Get the metrics of a cell
+      operationId: getCellMetrics
       parameters:
         - $ref: "#/components/parameters/containerId"
-        - $ref: "#/components/parameters/clusterId"
+        - $ref: "#/components/parameters/packId"
+        - $ref: "#/components/parameters/cellId"
+        - $ref: "#/components/parameters/dateFrom"
+        - $ref: "#/components/parameters/dateTo"
       responses:
         "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ListPackOverviewsResponse"
+                $ref: "#/components/schemas/CellMetricsResponse"
   /overview:
     get:
       tags:
@@ -105,12 +122,23 @@ components:
     PackMetricsResponse:
       type: object
       properties:
+        packHistogram:
+          $ref: "#/components/schemas/PackHistogram"
         metrics:
           $ref: "#/components/schemas/PackMetrics"
-        measurements:
-          type: array
-          items:
-            $ref: "#/components/schemas/EisMeasurement"
+        suggestion:
+          type: string
+        characteristicFrequencies:
+          $ref: "#/components/schemas/CharacteristicFrequencies"
+    CharacteristicFrequencies:
+      type: object
+      properties:
+        impedance10Hz:
+          type: number
+          format: double
+        impedance10000Hz:
+          type: number
+          format: double
     EisMeasurement:
       type: object
       properties:
@@ -183,6 +211,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Container"
+        packType:
+          type: string
+          enum: ["pack52", "pack104"]
     Overview:
       type: object
       properties:
@@ -198,6 +229,13 @@ components:
           type: integer
         cumulativeRiskIdentifications:
           type: integer
+        lastUpdatedAt:
+          type: string
+          format: date-time
+        alertTexts:
+          type: array
+          items:
+            type: string
     PackOverview:
       type: object
       properties:
@@ -229,25 +267,20 @@ components:
     PackMetrics:
       type: object
       properties:
-        packId:
+        absImpedanceMean:
+          type: number
+          format: double
+        impedanceStdDev:
+          type: number
+          format: double
+        coefficientOfVariation:
+          type: number
+          format: double
+        dispersion:
+          type: number
+          format: double
+        degradationLevel:
           type: string
-        dispersionCoefficient:
-          type: number
-          format: double
-        safetyRate:
-          type: number
-          format: double
-        diagnostics:
-          type: object
-          properties:
-            max:
-              $ref: "#/components/schemas/Diagnostic"
-            min:
-              $ref: "#/components/schemas/Diagnostic"
-        packHealthHistory:
-          type: array
-          items:
-            $ref: "#/components/schemas/PackHealth"
     PackHealth:
       type: object
       properties:
@@ -307,6 +340,188 @@ components:
         safetyRate:
           type: number
           format: double
+    PackHistogram:
+      type: array
+      items:
+        $ref: "#/components/schemas/PackHistogramPoint"
+    PackHistogramPoint:
+      type: object
+      properties:
+        absImpedanceMean:
+          type: number
+          format: double
+        maxAbsImpedance:
+          type: number
+          format: double
+        minAbsImpedance:
+          type: number
+          format: double
+        impedanceStdDev:
+          type: number
+          format: double
+    ClusterPackHistogram:
+      type: object
+      properties:
+        packId:
+          type: string
+        packHistogram:
+          type: array
+          items:
+            $ref: "#/components/schemas/PackHistogramPoint"
+    ClusterHistogram:
+      type: array
+      items:
+        $ref: "#/components/schemas/ClusterPackHistogram"
+    CellHistogram:
+      type: array
+      items:
+        $ref: "#/components/schemas/CellHistogramPoint"
+    CellHistogramPoint:
+      type: object
+      properties:
+        absImpedanceMean:
+          type: number
+          format: double
+        impedanceStdDev:
+          type: number
+          format: double
+        coefficientOfVariation:
+          type: number
+          format: double
+    CellMetricsResponse:
+      type: object
+      properties:
+        histogram:
+          $ref: "#/components/schemas/CellHistogram"
+        nyquistPlot:
+          $ref: "#/components/schemas/NyquistPlot"
+        bodePlot:
+          $ref: "#/components/schemas/BodePlot"
+        drtPlot:
+          $ref: "#/components/schemas/DrtPlot"
+        impedanceMeanMatrix:
+          $ref: "#/components/schemas/Matrix"
+        impedanceStdDevMatrix:
+          $ref: "#/components/schemas/Matrix"
+        metrics:
+          $ref: "#/components/schemas/CellMetrics"
+        equivalentCircuitDiagram:
+          $ref: "#/components/schemas/EquivalentCircuitDiagram"
+    EquivalentCircuitDiagram:
+      type: object
+      properties:
+        r1:
+          type: number
+          format: double
+        rct:
+          type: number
+          format: double
+        cdl:
+          type: number
+          format: double
+        zw:
+          type: number
+          format: double
+        rb:
+          type: number
+          format: double
+    NyquistPlot:
+      type: array
+      items:
+        $ref: "#/components/schemas/NyquistPlotPoint"
+    NyquistPlotPoint:
+      type: object
+      properties:
+        frequency:
+          type: number
+          format: double
+        realImpedance:
+          type: number
+          format: double
+        imaginaryImpedance:
+          type: number
+          format: double
+    BodePlot:
+      type: array
+      items:
+        $ref: "#/components/schemas/BodePlotPoint"
+    BodePlotPoint:
+      type: object
+      properties:
+        frequency:
+          type: number
+          format: double
+        phase:
+          type: number
+          format: double
+    DrtPlot:
+      type: array
+      items:
+        $ref: "#/components/schemas/DrtPlotPoint"
+    DrtPlotPoint:
+      type: object
+      properties:
+        a:
+          type: number
+    Matrix:
+      type: array
+      items:
+        type: array
+        items:
+          type: number
+          format: float
+    CellMetrics:
+      type: object
+      properties:
+        maxImpedanceStdDev:
+          type: number
+          format: double
+        minImpedanceStdDev:
+          type: number
+          format: double
+        maxAbsImpedance:
+          type: number
+          format: double
+        minAbsImpedance:
+          type: number
+          format: double
+        maxCoefficientOfVariation:
+          type: number
+          format: double
+        minCoefficientOfVariation:
+          type: number
+          format: double
+        absImpedanceMean:
+          type: number
+          format: double
+        impedanceStdDev:
+          type: number
+          format: double
+        coefficientOfVariation:
+          type: number
+          format: double
+        impedanceMeanTomaxRatio:
+          type: number
+          format: double
+        impedanceMeanToMinRatio:
+          type: number
+          format: double
+        impedanceMeanToAvgRatio:
+          type: number
+          format: double
+        impedanceStdDevToMaxRatio:
+          type: number
+          format: double
+        impedanceStdDevToMinRatio:
+          type: number
+        impedanceStdDevToAvgRatio:
+          type: number
+          format: double
+    ContainerPackMetricsResponse:
+      type: object
+      properties:
+        packHistograms:
+          $ref: "#/components/schemas/ClusterHistogram"
 
   parameters:
     containerId:
@@ -319,6 +534,12 @@ components:
       in: path
       required: true
       name: packId
+      schema:
+        type: string
+    cellId:
+      in: path
+      required: true
+      name: cellId
       schema:
         type: string
     clusterId:
