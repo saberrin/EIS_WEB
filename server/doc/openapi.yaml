@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Hub API
-  description: APIs for dashboard and transmission
+  description: APIs for dashboard
   version: 1.0.0
 servers:
   - url: http://localhost:8080/api/v1
@@ -12,6 +12,37 @@ tags:
   - name: Configuration
 
 paths:
+  /transmit-data:
+    post:
+      tags:
+        - Transmission
+      summary: transmit data to the server
+      operationId: transmitData
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransmitDataRequest"
+      responses:
+        "201":
+          description: Successful response
+  /export-data:
+    get:
+      tags:
+        - Dashboard
+      summary: Export data within a date range
+      operationId: exportData
+      parameters:
+        - $ref: "#/components/parameters/dateFrom"
+        - $ref: "#/components/parameters/dateTo"
+      responses:
+        "200":
+          description: CSV file containing the requested metrics
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
   /system-configuration:
     get:
       tags:
@@ -30,7 +61,7 @@ paths:
       tags:
         - Dashboard
       operationId: getContainerPackMetrics
-      description: get the metrics of all packs in a container
+      summary: get the metrics of all packs in a container
       parameters:
         - $ref: "#/components/parameters/containerId"
       responses:
@@ -88,57 +119,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Overview"
-  /transmit-data:
-    post:
-      tags:
-        - Transmission
-      summary: transmit data to the server
-      operationId: transmitData
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TransmitDataRequest"
-      responses:
-        "201":
-          description: Successful response
 components:
   schemas:
-    TransmitDataRequest:
-      type: object
-      properties:
-        eisMeasurements:
-          type: array
-          items:
-            $ref: "#/components/schemas/EisMeasurement"
-        generatedRecords:
-          type: array
-          items:
-            $ref: "#/components/schemas/GeneratedRecord"
-        packMetricsRecords:
-          type: array
-          items:
-            $ref: "#/components/schemas/PackMetricsRecord"
-    PackMetricsResponse:
-      type: object
-      properties:
-        packHistogram:
-          $ref: "#/components/schemas/PackHistogram"
-        metrics:
-          $ref: "#/components/schemas/PackMetrics"
-        suggestion:
-          type: string
-        characteristicFrequencies:
-          $ref: "#/components/schemas/CharacteristicFrequencies"
-    CharacteristicFrequencies:
-      type: object
-      properties:
-        impedance10Hz:
-          type: number
-          format: double
-        impedance10000Hz:
-          type: number
-          format: double
     EisMeasurement:
       type: object
       properties:
@@ -168,22 +150,39 @@ components:
         temperature:
           type: number
           format: double
-    Diagnostic:
+    TransmitDataRequest:
       type: object
       properties:
-        seiParameter:
-          type: integer
-        temperature:
+        eisMeasurements:
+          type: array
+          items:
+            $ref: "#/components/schemas/EisMeasurement"
+        cellStatistics:
+          type: array
+          items:
+            $ref: "#/components/schemas/CellStatistics"
+        packStatistics:
+          type: array
+          items:
+            $ref: "#/components/schemas/PackStatistics"
+    PackMetricsResponse:
+      type: object
+      properties:
+        packHistogram:
+          $ref: "#/components/schemas/PackHistogram"
+        metrics:
+          $ref: "#/components/schemas/PackMetrics"
+        suggestion:
+          type: string
+        characteristicFrequencies:
+          $ref: "#/components/schemas/CharacteristicFrequencies"
+    CharacteristicFrequencies:
+      type: object
+      properties:
+        impedance10Hz:
           type: number
           format: double
-        dendritesParameter:
-          type: integer
-        electrolyteParameter:
-          type: integer
-        polarizationPotential:
-          type: number
-          format: double
-        conductivity:
+        impedance10000Hz:
           type: number
           format: double
     Cluster:
@@ -236,34 +235,61 @@ components:
           type: array
           items:
             type: string
-    PackOverview:
+    PackStatistics:
       type: object
       properties:
+        containerId:
+          type: string
+        clusterId:
+          type: string
         packId:
           type: string
-        dispersionCoefficient:
+        realTimeId:
+          type: string
+        maxAbsImpedance:
           type: number
           format: double
-        averageImpedanceRecords:
-          type: array
-          items:
-            $ref: "#/components/schemas/AverageImpedanceRecord"
-    ListPackOverviewsResponse:
-      type: object
-      properties:
-        records:
-          type: array
-          items:
-            $ref: "#/components/schemas/PackOverview"
-    AverageImpedanceRecord:
-      type: object
-      properties:
-        frequency:
+        minAbsImpedance:
           type: number
           format: double
-        averageImpedance:
+        maxCoefficientOfVariation:
           type: number
           format: double
+        minCoefficientOfVariation:
+          type: number
+          format: double
+        maxImpedanceStdDev:
+          type: number
+          format: double
+        minImpedanceStdDev:
+          type: number
+          format: double
+        temperature:
+          type: number
+          format: double
+        absImpedanceMean:
+          type: number
+          format: double
+        impedanceStdDev:
+          type: number
+          format: double
+        coefficientOfVariation:
+          type: number
+          format: double
+        dispersion:
+          type: number
+          format: double
+        degradationLevel:
+          type: string
+        suggestion:
+          type: string
+        alertText:
+          type: string
+        characteristicFrequencies:
+          $ref: "#/components/schemas/CharacteristicFrequencies"
+        creationTime:
+          type: string
+          format: date-time
     PackMetrics:
       type: object
       properties:
@@ -281,65 +307,6 @@ components:
           format: double
         degradationLevel:
           type: string
-    PackHealth:
-      type: object
-      properties:
-        safetyRate:
-          type: number
-          format: double
-        creationTime:
-          type: string
-          format: date
-    GeneratedRecord:
-      type: object
-      properties:
-        containerId:
-          type: string
-        clusterId:
-          type: string
-        packId:
-          type: string
-        cellId:
-          type: string
-        creationTime:
-          type: string
-          format: date-time
-        dispersionCoefficient:
-          type: number
-          format: double
-        temperature:
-          type: number
-          format: double
-        seiParameter:
-          type: integer
-        dendritesParameter:
-          type: integer
-        electrolyteParameter:
-          type: integer
-        polarizationPotential:
-          type: number
-          format: double
-        conductivity:
-          type: number
-          format: double
-    PackMetricsRecord:
-      type: object
-      properties:
-        containerId:
-          type: string
-        clusterId:
-          type: string
-        packId:
-          type: string
-        creationTime:
-          type: string
-          format: date-time
-        dispersionCoefficient:
-          type: number
-          format: double
-        safetyRate:
-          type: number
-          format: double
     PackHistogram:
       type: array
       items:
@@ -388,6 +355,9 @@ components:
         coefficientOfVariation:
           type: number
           format: double
+        timestamp:
+          type: string
+          format: date-time
     CellMetricsResponse:
       type: object
       properties:
@@ -399,9 +369,9 @@ components:
           $ref: "#/components/schemas/BodePlot"
         drtPlot:
           $ref: "#/components/schemas/DrtPlot"
-        impedanceMeanMatrix:
+        realPartCorrelation:
           $ref: "#/components/schemas/Matrix"
-        impedanceStdDevMatrix:
+        imagPartCorrelation:
           $ref: "#/components/schemas/Matrix"
         metrics:
           $ref: "#/components/schemas/CellMetrics"
@@ -425,16 +395,31 @@ components:
         rb:
           type: number
           format: double
+    Range:
+      type: object
+      properties:
+        max:
+          type: number
+          format: double
+        min:
+          type: number
+          format: double
     NyquistPlot:
-      type: array
-      items:
-        $ref: "#/components/schemas/NyquistPlotPoint"
+      type: object
+      properties:
+        metrics:
+          type: array
+          items:
+            $ref: "#/components/schemas/NyquistPlotPoint"
+        heatMap:
+          $ref: "#/components/schemas/Matrix"
+        xAxisRange:
+          $ref: "#/components/schemas/Range"
+        yAxisRange:
+          $ref: "#/components/schemas/Range"
     NyquistPlotPoint:
       type: object
       properties:
-        frequency:
-          type: number
-          format: double
         realImpedance:
           type: number
           format: double
@@ -461,15 +446,81 @@ components:
     DrtPlotPoint:
       type: object
       properties:
-        a:
+        relaxT:
           type: number
+          format: double
+        yT:
+          type: number
+          format: double
     Matrix:
       type: array
       items:
         type: array
         items:
           type: number
-          format: float
+          format: double
+    CellStatistics:
+      type: object
+      properties:
+        containerId:
+          type: string
+        clusterId:
+          type: string
+        packId:
+          type: string
+        groupId:
+          type: string
+        cellId:
+          type: string
+        realTimeId:
+          type: string
+        absImpedanceMean:
+          type: number
+          format: double
+        impedanceStdDev:
+          type: number
+          format: double
+        coefficientOfVariation:
+          type: number
+          format: double
+        phase:
+          type: number
+          format: double
+        impedanceMeanToMaxRatio:
+          type: number
+          format: double
+        impedanceMeanToMinRatio:
+          type: number
+          format: double
+        impedanceMeanToAvgRatio:
+          type: number
+          format: double
+        impedanceStdDevToMaxRatio:
+          type: number
+          format: double
+        impedanceStdDevToMinRatio:
+          type: number
+          format: double
+        impedanceStdDevToAvgRatio:
+          type: number
+          format: double
+        bodePlot:
+          $ref: "#/components/schemas/BodePlot"
+        nyquistPlot:
+          $ref: "#/components/schemas/NyquistPlot"
+        drtPlot:
+          $ref: "#/components/schemas/DrtPlotPoint"
+        impedanceMeanMatrix:
+          $ref: "#/components/schemas/Matrix"
+        impedanceStdDevMatrix:
+          $ref: "#/components/schemas/Matrix"
+        equivalentCircuitDiagram:
+          $ref: "#/components/schemas/EquivalentCircuitDiagram"
+        creationTime:
+          type: string
+          format: date-time
+        longWaveformData:
+          type: object
     CellMetrics:
       type: object
       properties:

@@ -26,7 +26,7 @@ public class DataRetentionManager {
         DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyy_MM");
         ZonedDateTime now = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
-        List<String> tableNames = List.of("eis_measurement", "generated_record", "pack_metrics_record");
+        List<String> tableNames = List.of("eis_measurement");
         List<ZonedDateTime> dates = List.of(now, now.plusMonths(1));
 
         for (String tableName : tableNames) {
@@ -37,14 +37,19 @@ public class DataRetentionManager {
                         "CREATE TABLE IF NOT EXISTS %s PARTITION OF %s FOR VALUES FROM ('%s') TO ('%s')",
                         partitionName, tableName, dayFormatter.format(date), dayFormatter.format(date.plusMonths(1))
                 );
-                String createPartitionIndexQuery = String.format(
+                String createPartitionPackIndexQuery = String.format(
                         "CREATE INDEX IF NOT EXISTS idx_%s ON %s (pack_id, creation_time)",
+                        partitionName, partitionName
+                );
+                String createPartitionCellIndexQuery = String.format(
+                        "CREATE INDEX IF NOT EXISTS idx_%s ON %s (cell_id, creation_time)",
                         partitionName, partitionName
                 );
 
                 try (Connection connection = dataSource.getConnection()) {
                     connection.prepareStatement(createPartitionQuery).execute();
-                    connection.prepareStatement(createPartitionIndexQuery).execute();
+                    connection.prepareStatement(createPartitionPackIndexQuery).execute();
+                    connection.prepareStatement(createPartitionCellIndexQuery).execute();
                 } catch (Throwable e) {
                     log.error("failed to execute query date {} table {}", date, tableName, e);
                 }

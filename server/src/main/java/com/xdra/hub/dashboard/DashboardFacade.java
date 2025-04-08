@@ -18,12 +18,4 @@ public class DashboardFacade {
     public Overview getDashboardOverview() {
         return analyticsService.getOverview();
     }
-
-    public PackMetricsResponse getPackMetrics(String containerId, String clusterId, String packId) {
-        return packService.getPackMetrics(containerId, clusterId, packId);
-    }
-
-    public ListPackOverviewsResponse listPackOverviews(String containerId, String clusterId) {
-        return packService.listPackOverviews(containerId, clusterId);
-    }
 }

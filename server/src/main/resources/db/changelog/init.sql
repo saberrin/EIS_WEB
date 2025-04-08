@@ -95,3 +95,70 @@ create table if not exists monthly_statistics (
     total_inspections integer,
     total_measurements bigint
 );
+
+--changeset bruce.jeaung:v2
+drop table if exists pack_metrics_record;
+drop table if exists generated_record;
+
+-- pack_statistics
+CREATE TABLE IF NOT EXISTS pack_statistics (
+    id SERIAL PRIMARY KEY,
+    container_id INTEGER,
+    cluster_id INTEGER,
+    pack_id INTEGER,
+    real_time_id TEXT,
+    abs_impedance_mean REAL,
+    impedance_std_dev REAL,
+    coefficient_variation REAL,
+    dispersion REAL,
+    characteristic_frequencies jsonb,
+    max_abs_impedance REAL,
+    min_abs_impedance REAL,
+    max_coefficient_variation REAL,
+    min_coefficient_variation REAL,
+    max_impedance_std_dev REAL,
+    min_impedance_std_dev REAL,
+    temperature REAL,
+    degradation_level TEXT,
+    suggestion TEXT,
+    alert_text TEXT,
+    creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+create index if not exists idx_pack_statistics_container_creation_time on pack_statistics (container_id, creation_time);
+create index if not exists idx_pack_statistics_pack_creation_time on pack_statistics (pack_id, creation_time);
+
+
+-- cell_statistics
+CREATE TABLE IF NOT EXISTS cell_statistics (
+    id SERIAL PRIMARY KEY,
+    container_id INTEGER,
+    cluster_id INTEGER,
+    pack_id INTEGER,
+    group_id INTEGER,
+    cell_id INTEGER,
+    real_time_id TEXT,
+    abs_impedance_mean REAL,
+    impedance_std_dev REAL,
+    coefficient_variation REAL,
+    phase REAL,
+    imp_mean_to_max_ratio REAL,
+    imp_mean_to_min_ratio REAL,
+    imp_mean_to_avg_ratio REAL,
+    imp_std_dev_to_max_ratio REAL,
+    imp_std_dev_to_min_ratio REAL,
+    imp_std_dev_to_avg_ratio REAL,
+    nyquist_plot jsonb,
+    bode_plot jsonb,
+    drt_plot jsonb,
+    imp_mean_matrix jsonb,
+    imp_std_dev_matrix jsonb,
+    eq_circuit_data jsonb,
+    creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+create index if not exists idx_cell_statistics_cell_creation_time on cell_statistics (cell_id, creation_time);
+
+create table if not exists system_configuration (
+    id serial primary key,
+    key text,
+    value text
+);

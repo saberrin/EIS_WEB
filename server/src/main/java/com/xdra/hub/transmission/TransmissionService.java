@@ -1,15 +1,12 @@
 package com.xdra.hub.transmission;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xdra.hub.entity.CellStatisticsEntity;
 import com.xdra.hub.entity.EisMeasurementEntity;
-import com.xdra.hub.entity.GeneratedRecordEntity;
-import com.xdra.hub.entity.PackMetricsRecordEntity;
+import com.xdra.hub.entity.PackStatisticsEntity;
 import com.xdra.hub.model.EisMeasurement;
-import com.xdra.hub.model.GeneratedRecord;
-import com.xdra.hub.model.PackMetricsRecord;
 import com.xdra.hub.model.TransmitDataRequest;
-import com.xdra.hub.repository.EisMeasurementRepository;
-import com.xdra.hub.repository.GeneratedRecordRepository;
-import com.xdra.hub.repository.PackMetricsRecordRepository;
+import com.xdra.hub.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,13 +33,14 @@ import java.util.stream.Collectors;
 public class TransmissionService {
 
     private final EisMeasurementRepository eisMeasurementRepository;
-    private final GeneratedRecordRepository generatedRecordRepository;
-    private final PackMetricsRecordRepository packMetricsRecordRepository;
+    private final CellStatisticsRepository cellStatisticsRepository;
+    private final PackStatisticsRepository packStatisticsRepository;
+    private final ObjectMapper objectMapper;
 
     public void transmitData(TransmitDataRequest request) {
-        log.info("received request to transmit data {} eis measurements, {} generated records, and {} pack metrics records",
-                request.getEisMeasurements().size(), request.getGeneratedRecords().size(), request.getPackMetricsRecords().size());
         if (!CollectionUtils.isEmpty(request.getEisMeasurements())) {
+            log.info("received request to transmit data {} eis measurements",
+                    request.getEisMeasurements().size());
             eisMeasurementRepository.saveAll(request.getEisMeasurements().stream().map(dto -> EisMeasurementEntity.builder()
                             .containerId(Long.parseLong(dto.getContainerId()))
                             .clusterId(Long.parseLong(dto.getClusterId()))
@@ -57,33 +55,58 @@ public class TransmissionService {
                             .build())
                     .collect(Collectors.toList()));
         }
-        if (!CollectionUtils.isEmpty(request.getGeneratedRecords())) {
-            generatedRecordRepository.saveAll(request.getGeneratedRecords().stream().map(dto ->
-                    GeneratedRecordEntity.builder()
+        if (!CollectionUtils.isEmpty(request.getCellStatistics())) {
+            log.info("received {} cell statistics records", request.getCellStatistics().size());
+            cellStatisticsRepository.saveAll(request.getCellStatistics().stream().map(dto -> CellStatisticsEntity.builder()
                             .containerId(Long.parseLong(dto.getContainerId()))
                             .clusterId(Long.parseLong(dto.getClusterId()))
                             .packId(Long.parseLong(dto.getPackId()))
+                            .groupId(Long.parseLong(dto.getGroupId()))
                             .cellId(Long.parseLong(dto.getCellId()))
+                            .absImpedanceMean(dto.getAbsImpedanceMean())
+                            .impedanceStdDev(dto.getImpedanceStdDev())
+                            .coefficientOfVariation(dto.getCoefficientOfVariation())
+                            .phase(dto.getPhase())
+                            .impMeanToMaxRatio(dto.getImpedanceMeanToMaxRatio())
+                            .impMeanToMinRatio(dto.getImpedanceMeanToMinRatio())
+                            .impMeanToAvgRatio(dto.getImpedanceMeanToAvgRatio())
+                            .impStdDevToMaxRatio(dto.getImpedanceStdDevToMaxRatio())
+                            .impStdDevToMinRatio(dto.getImpedanceStdDevToMinRatio())
+                            .impStdDevToAvgRatio(dto.getImpedanceStdDevToAvgRatio())
+                            .nyquistPlot(objectMapper.valueToTree(dto.getNyquistPlot()))
+                            .bodePlot(objectMapper.valueToTree(dto.getBodePlot()))
+                            .drtPlot(objectMapper.valueToTree(dto.getDrtPlot()))
+                            .impedanceMeanMatrix(objectMapper.valueToTree(dto.getImpedanceMeanMatrix()))
+                            .impedanceStdDevMatrix(objectMapper.valueToTree(dto.getImpedanceStdDevMatrix()))
+                            .eqCircuitData(objectMapper.valueToTree(dto.getEquivalentCircuitDiagram()))
                             .creationTime(dto.getCreationTime().toInstant())
-                            .dispersionCoefficient(dto.getDispersionCoefficient())
-                            .temperature(dto.getTemperature())
-                            .seiParameter(dto.getSeiParameter())
-                            .dendritesParameter(dto.getDendritesParameter())
-                            .electrolyteParameter(dto.getElectrolyteParameter())
-                            .polarizationPotential(dto.getPolarizationPotential())
-                            .conductivity(dto.getConductivity())
-                            .build()).collect(Collectors.toList()));
+                            .build())
+                    .collect(Collectors.toList()));
         }
-        if (!CollectionUtils.isEmpty(request.getPackMetricsRecords())) {
-            packMetricsRecordRepository.saveAll(request.getPackMetricsRecords().stream().map(dto ->
-                    PackMetricsRecordEntity.builder()
+        if (!CollectionUtils.isEmpty(request.getPackStatistics())) {
+            log.info("received {} pack statistics records", request.getPackStatistics().size());
+            packStatisticsRepository.saveAll(request.getPackStatistics().stream().map(dto -> PackStatisticsEntity.builder()
                             .containerId(Long.parseLong(dto.getContainerId()))
                             .clusterId(Long.parseLong(dto.getClusterId()))
                             .packId(Long.parseLong(dto.getPackId()))
+                            .absImpedanceMean(dto.getAbsImpedanceMean())
+                            .impedanceStdDev(dto.getImpedanceStdDev())
+                            .coefficientOfVariation(dto.getCoefficientOfVariation())
+                            .dispersion(dto.getDispersion())
+                            .characteristicFrequencies(objectMapper.valueToTree(dto.getCharacteristicFrequencies()))
+                            .maxAbsImpedance(dto.getMaxAbsImpedance())
+                            .minAbsImpedance(dto.getMinAbsImpedance())
+                            .maxCoefficientOfVariation(dto.getMaxCoefficientOfVariation())
+                            .minCoefficientOfVariation(dto.getMinCoefficientOfVariation())
+                            .maxImpedanceStdDev(dto.getMaxImpedanceStdDev())
+                            .minImpedanceStdDev(dto.getMinImpedanceStdDev())
+                            .temperature(dto.getTemperature())
+                            .degradationLevel(dto.getDegradationLevel())
+                            .suggestion(dto.getSuggestion())
+                            .alertText(dto.getAlertText())
                             .creationTime(dto.getCreationTime().toInstant())
-                            .dispersionCoefficient(dto.getDispersionCoefficient())
-                            .safetyRate(dto.getSafetyRate())
-                            .build()).collect(Collectors.toList()));
+                            .build())
+                    .collect(Collectors.toList()));
         }
     }
 
@@ -126,58 +149,6 @@ public class TransmissionService {
             creationTime = creationTime.plusDays(1);
         }
         request.setEisMeasurements(measurements);
-
-        creationTime = OffsetDateTime.now();
-        List<GeneratedRecord> generatedRecords = new ArrayList<>(2 * 8 * 52);
-        // 3 days
-        for (int a = 0; a < 3; a++) {// 2 clusters
-            for (int b = 0; b < 2; b++) {
-                // 8 packs
-                for (int c = 0; c < 8; c++) {
-                    // 52 cells
-                    for (int d = 0; d < 52; d++) {
-                        GeneratedRecord record = new GeneratedRecord();
-                        record.setContainerId(String.valueOf(b + 1));
-                        record.setClusterId(String.valueOf(b + 1));
-                        record.setPackId(String.valueOf(8 * b + c + 1));
-                        record.setCellId(String.valueOf(d + 1));
-                        record.setTemperature(random.nextDouble(10, 60));
-                        record.setDispersionCoefficient(random.nextDouble(0.1, 0.9));
-                        record.setSeiParameter(random.nextInt(1, 10));
-                        record.setDendritesParameter(random.nextInt(1, 10));
-                        record.setElectrolyteParameter(random.nextInt(1, 10));
-                        record.setPolarizationPotential(random.nextDouble(0.1, 0.9));
-                        record.setConductivity(random.nextDouble(0.1, 0.9));
-                        record.setCreationTime(creationTime);
-                        generatedRecords.add(record);
-                    }
-                }
-            }
-            creationTime = creationTime.plusDays(1);
-        }
-        request.setGeneratedRecords(generatedRecords);
-
-        creationTime = OffsetDateTime.now();
-        List<PackMetricsRecord> packMetricsRecords = new ArrayList<>(2 * 8);
-        // 3 days
-        for (int a = 0; a < 3; a++) {
-            creationTime = creationTime.plusDays(1);
-            // 2 clusters
-            for (int b = 0; b < 2; b++) {
-                // 8 packs
-                for (int c = 0; c < 8; c++) {
-                    PackMetricsRecord record = new PackMetricsRecord();
-                    record.setContainerId(String.valueOf(b + 1));
-                    record.setClusterId(String.valueOf(b + 1));
-                    record.setPackId(String.valueOf(8 * b + c + 1));
-                    record.setDispersionCoefficient(random.nextDouble(0.1, 0.9));
-                    record.setSafetyRate(random.nextDouble(0.1, 0.9));
-                    record.setCreationTime(creationTime);
-                    packMetricsRecords.add(record);
-                }
-            }
-        }
-        request.setPackMetricsRecords(packMetricsRecords);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
