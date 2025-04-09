@@ -176,6 +176,10 @@ components:
           type: string
         characteristicFrequencies:
           $ref: "#/components/schemas/CharacteristicFrequencies"
+        cellColors:
+          type: array
+          items:
+            $ref: "#/components/schemas/CellColorInfo"
     CharacteristicFrequencies:
       type: object
       properties:
@@ -510,9 +514,9 @@ components:
           $ref: "#/components/schemas/NyquistPlot"
         drtPlot:
           $ref: "#/components/schemas/DrtPlotPoint"
-        impedanceMeanMatrix:
+        realPartCorrelation:
           $ref: "#/components/schemas/Matrix"
-        impedanceStdDevMatrix:
+        imagPartCorrelation:
           $ref: "#/components/schemas/Matrix"
         equivalentCircuitDiagram:
           $ref: "#/components/schemas/EquivalentCircuitDiagram"
@@ -551,7 +555,7 @@ components:
         coefficientOfVariation:
           type: number
           format: double
-        impedanceMeanTomaxRatio:
+        impedanceMeanToMaxRatio:
           type: number
           format: double
         impedanceMeanToMinRatio:
@@ -573,7 +577,13 @@ components:
       properties:
         packHistograms:
           $ref: "#/components/schemas/ClusterHistogram"
-
+    CellColorInfo:
+      type: object
+      properties:
+        cellId:
+          type: string
+        color:
+          type: string
   parameters:
     containerId:
       in: path

@@ -79,13 +79,13 @@ public class CellStatisticsEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode drtPlot;
 
-    @Column(name = "imp_mean_matrix", columnDefinition = "jsonb")
+    @Column(name = "imag_part_correlation", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-    private JsonNode impedanceMeanMatrix;
+    private JsonNode imagPartCorrelation;
 
-    @Column(name = "imp_std_dev_matrix", columnDefinition = "jsonb")
+    @Column(name = "real_part_correlation", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-    private JsonNode impedanceStdDevMatrix;
+    private JsonNode realPartCorrelation;
 
     @Column(name = "eq_circuit_data", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
