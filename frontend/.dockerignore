@@ -1,0 +1,12 @@
+# Ignore node_modules - let Docker install them fresh inside the container
+node_modules
+
+# Ignore build output directory
+dist
+
+# Optional: other common files to ignore
+npm-debug.log
+yarn-error.log
+.DS_Store
+.env.local
+.env.*

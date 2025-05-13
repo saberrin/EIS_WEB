@@ -1,0 +1,10 @@
+{   
+    "pack": {
+        "pack_mean_impedance": 1.4287661513353511,
+        "pack_std_impedance": 0.0053354068436524725,
+        "pack_cv_impedance": 0.003734275786605039,
+        "pack_mean_10000Hz": 1.4230136163537517,
+        "pack_mean_10Hz": 1.4293703907857491,
+        "pack_degradation_mode": "\u6b63\u5e38"
+    }
+}
