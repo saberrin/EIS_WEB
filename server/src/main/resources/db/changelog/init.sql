@@ -119,10 +119,11 @@ CREATE TABLE IF NOT EXISTS pack_statistics (
     max_impedance_std_dev REAL,
     min_impedance_std_dev REAL,
     temperature REAL,
+    cell_colors jsonb,
     degradation_level TEXT,
     suggestion TEXT,
     alert_text TEXT,
-    creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    creation_time TIMESTAMP without time zone
 );
 create index if not exists idx_pack_statistics_container_creation_time on pack_statistics (container_id, creation_time);
 create index if not exists idx_pack_statistics_pack_creation_time on pack_statistics (pack_id, creation_time);
@@ -136,7 +137,6 @@ CREATE TABLE IF NOT EXISTS cell_statistics (
     pack_id INTEGER,
     group_id INTEGER,
     cell_id INTEGER,
-    real_time_id TEXT,
     abs_impedance_mean REAL,
     impedance_std_dev REAL,
     coefficient_variation REAL,
@@ -147,18 +147,25 @@ CREATE TABLE IF NOT EXISTS cell_statistics (
     imp_std_dev_to_max_ratio REAL,
     imp_std_dev_to_min_ratio REAL,
     imp_std_dev_to_avg_ratio REAL,
+    max_impedance_std_dev REAL,
+    min_impedance_std_dev REAL,
+    max_abs_impedance REAL,
+    min_abs_impedance REAL,
+    max_coefficient_variation REAL,
+    min_coefficient_variation REAL,
+    real_part_correlation jsonb not null,
+    imag_part_correlation jsonb not null,
     nyquist_plot jsonb,
     bode_plot jsonb,
     drt_plot jsonb,
-    imp_mean_matrix jsonb,
-    imp_std_dev_matrix jsonb,
-    eq_circuit_data jsonb,
-    creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    real_part_10Hz real,
+    imaginary_part_10Hz real,
+    equivalent_circuit_diagram jsonb,
+    creation_time TIMESTAMP without time zone
 );
 create index if not exists idx_cell_statistics_cell_creation_time on cell_statistics (cell_id, creation_time);
 
-create table if not exists system_configuration (
-    id serial primary key,
-    key text,
-    value text
-);
+--changeset bruce.jeaung:delete-config
+delete from cluster;
+delete from container;
+delete from pack;

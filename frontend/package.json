@@ -1,61 +1,28 @@
 {
-  "name": "dianyuan",
-  "version": "1.5.1",
-  "private": true,
-  "scripts": {
-    "serve": "webpack serve --mode development",
-    "build": "webpack --mode production"
-  },
-  "dependencies": {
-    "@jiaminghi/data-view": "^2.7.3",
-    "@types/echarts": "^4.4.3",
-    "axios": "^1.6.7",
-    "core-js": "^3.6.4",
-    "css-loader": "^7.1.2",
-    "echarts": "^4.6.0",
-    "vue": "^2.6.11",
-    "vue-awesome": "^4.0.2",
-    "vue-router": "^3.1.5",
-    "vuex": "^3.1.2"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "@vue/cli-plugin-babel": "^4.2.0",
-    "@vue/cli-plugin-eslint": "^4.2.0",
-    "@vue/cli-service": "^4.2.0",
-    "babel-eslint": "^10.0.3",
-    "babel-loader": "^9.2.1",
-    "css-loader": "^7.1.2",
-    "dotenv-webpack": "^8.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.1.2",
-    "html-webpack-plugin": "^5.6.3",
-    "sass": "^1.25.0",
-    "sass-loader": "^8.0.2",
-    "style-loader": "^4.0.0",
-    "vue-loader": "^15.11.1",
-    "vue-template-compiler": "^2.6.11",
-    "webpack": "^5.97.1",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.1.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
+    "name": "my-vue-app",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
     },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
+    "dependencies": {
+        "axios": "^1.8.4",
+        "echarts": "^5.4.3",
+        "echarts-gl": "^2.0.9",
+        "three": "^0.174.0",
+        "vue": "^3.5.13",
+        "vue-amazing-ui": "^2.4.3",
+        "vuex": "^4.1.0"
     },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions"
-  ]
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^5.2.1",
+        "@vue/tsconfig": "^0.7.0",
+        "sass-embedded": "^1.85.1",
+        "typescript": "~5.7.2",
+        "vite": "^6.2.0",
+        "vue-tsc": "^2.2.4"
+    }
 }

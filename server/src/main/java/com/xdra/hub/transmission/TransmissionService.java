@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xdra.hub.entity.CellStatisticsEntity;
 import com.xdra.hub.entity.EisMeasurementEntity;
 import com.xdra.hub.entity.PackStatisticsEntity;
-import com.xdra.hub.model.EisMeasurement;
-import com.xdra.hub.model.TransmitDataRequest;
+import com.xdra.hub.model.*;
 import com.xdra.hub.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -73,12 +72,20 @@ public class TransmissionService {
                             .impStdDevToMaxRatio(dto.getImpedanceStdDevToMaxRatio())
                             .impStdDevToMinRatio(dto.getImpedanceStdDevToMinRatio())
                             .impStdDevToAvgRatio(dto.getImpedanceStdDevToAvgRatio())
+                            .maxImpedanceStdDev(dto.getMaxImpedanceStdDev())
+                            .minImpedanceStdDev(dto.getMinImpedanceStdDev())
+                            .maxAbsImpedance(dto.getMaxAbsImpedance())
+                            .minAbsImpedance(dto.getMinAbsImpedance())
+                            .maxCoefficientOfVariation(dto.getMaxCoefficientOfVariation())
+                            .minCoefficientOfVariation(dto.getMinCoefficientOfVariation())
                             .nyquistPlot(objectMapper.valueToTree(dto.getNyquistPlot()))
                             .bodePlot(objectMapper.valueToTree(dto.getBodePlot()))
                             .drtPlot(objectMapper.valueToTree(dto.getDrtPlot()))
                             .realPartCorrelation(objectMapper.valueToTree(dto.getRealPartCorrelation()))
                             .imagPartCorrelation(objectMapper.valueToTree(dto.getImagPartCorrelation()))
-                            .eqCircuitData(objectMapper.valueToTree(dto.getEquivalentCircuitDiagram()))
+                            .equivalentCircuitData(objectMapper.valueToTree(dto.getEquivalentCircuitDiagram()))
+                            .realPart10Hz(dto.getRealPart10Hz())
+                            .imaginaryPart10Hz(dto.getImaginaryPart10Hz())
                             .creationTime(dto.getCreationTime().toInstant())
                             .build())
                     .collect(Collectors.toList()));
@@ -101,9 +108,10 @@ public class TransmissionService {
                             .maxImpedanceStdDev(dto.getMaxImpedanceStdDev())
                             .minImpedanceStdDev(dto.getMinImpedanceStdDev())
                             .temperature(dto.getTemperature())
-                            .degradationLevel(dto.getDegradationLevel())
+                            .degradationLevel(dto.getDegradationLevel().toString())
                             .suggestion(dto.getSuggestion())
                             .alertText(dto.getAlertText())
+                            .cellColors(objectMapper.valueToTree(dto.getCellColors()))
                             .creationTime(dto.getCreationTime().toInstant())
                             .build())
                     .collect(Collectors.toList()));
@@ -149,6 +157,70 @@ public class TransmissionService {
             creationTime = creationTime.plusDays(1);
         }
         request.setEisMeasurements(measurements);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Generate mock data for CellStatistics
+        List<CellStatistics> cellStatistics = new ArrayList<>();
+        for (int i = 0; i < 10; i++) { // Mock 10 records
+            CellStatistics cellStat = new CellStatistics();
+            cellStat.setContainerId(String.valueOf(i + 1));
+            cellStat.setClusterId(String.valueOf(i + 1));
+            cellStat.setPackId(String.valueOf(i + 1));
+            cellStat.setGroupId(String.valueOf(i + 1));
+            cellStat.setCellId(String.valueOf(i + 1));
+            cellStat.setAbsImpedanceMean(random.nextDouble(1, 100));
+            cellStat.setImpedanceStdDev(random.nextDouble(0, 10));
+            cellStat.setCoefficientOfVariation(random.nextDouble(0, 1));
+            cellStat.setPhase(random.nextDouble(0, 360));
+            cellStat.setImpedanceMeanToMaxRatio(random.nextDouble(0.5, 1.5));
+            cellStat.setImpedanceMeanToMinRatio(random.nextDouble(0.5, 1.5));
+            cellStat.setImpedanceMeanToAvgRatio(random.nextDouble(0.5, 1.5));
+            cellStat.impedanceStdDevToMaxRatio(random.nextDouble(0.5, 1.5));
+            cellStat.setImpedanceStdDevToMinRatio(random.nextDouble(0.5, 1.5));
+            cellStat.setImpedanceStdDevToAvgRatio(random.nextDouble(0.5, 1.5));
+            cellStat.setMaxImpedanceStdDev(random.nextDouble(0, 10));
+            cellStat.setMinImpedanceStdDev(random.nextDouble(0, 10));
+            cellStat.setMaxAbsImpedance(random.nextDouble(1, 100));
+            cellStat.setMinAbsImpedance(random.nextDouble(1, 100));
+            cellStat.setMaxCoefficientOfVariation(random.nextDouble(0, 1));
+            cellStat.setMinCoefficientOfVariation(random.nextDouble(0, 1));
+            cellStat.setCreationTime(OffsetDateTime.now());
+            cellStat.setEquivalentCircuitDiagram(new EquivalentCircuitDiagram());
+            cellStat.setImaginaryPart10Hz(random.nextDouble(0, 10));
+            cellStat.setRealPart10Hz(random.nextDouble(0, 10));
+            cellStatistics.add(cellStat);
+        }
+        request.setCellStatistics(cellStatistics);
+
+        // Generate mock data for PackStatistics
+        List<PackStatistics> packStatistics = new ArrayList<>();
+        for (int i = 0; i < 5; i++) { // Mock 5 records
+            PackStatistics packStat = new PackStatistics();
+            packStat.setContainerId(String.valueOf(i + 1));
+            packStat.setClusterId(String.valueOf(i + 1));
+            packStat.setPackId(String.valueOf(i + 1));
+            packStat.setAbsImpedanceMean(random.nextDouble(1, 100));
+            packStat.setImpedanceStdDev(random.nextDouble(0, 10));
+            packStat.setCoefficientOfVariation(random.nextDouble(0, 1));
+            packStat.setDispersion(random.nextDouble(0, 10));
+            CharacteristicFrequencies characteristicFrequencies = new CharacteristicFrequencies();
+            packStat.setCharacteristicFrequencies(characteristicFrequencies); // Mock empty JsonNode
+            packStat.setMaxAbsImpedance(random.nextDouble(1, 100));
+            packStat.setMinAbsImpedance(random.nextDouble(1, 100));
+            packStat.setMaxCoefficientOfVariation(random.nextDouble(0, 1));
+            packStat.setMinCoefficientOfVariation(random.nextDouble(0, 1));
+            packStat.setMaxImpedanceStdDev(random.nextDouble(0, 10));
+            packStat.setMinImpedanceStdDev(random.nextDouble(0, 10));
+            packStat.setTemperature(random.nextDouble(20, 40));
+            packStat.setDegradationLevel(DegradationLevel.NORMAL);
+            packStat.setSuggestion("No issues");
+            packStat.setAlertText("All clear");
+            packStat.setCellColors(objectMapper.createObjectNode()); // Mock empty JsonNode
+            packStat.setCreationTime(OffsetDateTime.now());
+            packStatistics.add(packStat);
+        }
+        request.setPackStatistics(packStatistics);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

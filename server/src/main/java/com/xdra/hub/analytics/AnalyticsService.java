@@ -4,12 +4,14 @@ import com.xdra.hub.entity.MonthlyStatsEntity;
 import com.xdra.hub.model.Overview;
 import com.xdra.hub.repository.EisMeasurementRepository;
 import com.xdra.hub.repository.MonthlyStatsRepository;
+import com.xdra.hub.repository.PackStatisticsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -22,6 +24,7 @@ public class AnalyticsService {
 
     private final MonthlyStatsRepository monthlyStatsRepository;
     private final EisMeasurementRepository eisMeasurementRepository;
+    private final PackStatisticsRepository packStatisticsRepository;
 
     public void calculateMonthlyStats() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
@@ -55,6 +58,13 @@ public class AnalyticsService {
         overview.setTotalInspections(historicalStats.getTotalInspections() + currentStats.getTotalInspections());
         overview.setTotalMeasurements(historicalStats.getTotalMeasurements() + currentStats.getTotalMeasurements());
         overview.setMonthlyInspections((int) currentStats.getTotalInspections().longValue());
+        eisMeasurementRepository.getLatestRecord().ifPresentOrElse(
+                em -> overview.setLastUpdatedAt(em.getCreationTime().atZone(ZoneId.of("Asia/Shanghai")).toOffsetDateTime()),
+                () -> overview.setLastUpdatedAt(ZonedDateTime.now().toOffsetDateTime()));
+        overview.setAlertTexts(packStatisticsRepository.getAlertTexts());
+        // TODO
+        overview.totalRiskySamples(0);
+        overview.setCumulativeRiskIdentifications(0);
         return overview;
     }
 }

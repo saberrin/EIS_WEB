@@ -10,6 +10,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,9 @@ public class ConfigurationService {
     private final ContainerRepository containerRepository;
     @Getter
     private volatile SystemConfiguration systemConfiguration;
+
+    @Value("${config.pack.type}")
+    private SystemConfiguration.PackTypeEnum packType;
 
     @PostConstruct
     public void init() {
@@ -47,6 +51,7 @@ public class ConfigurationService {
 
             systemConfiguration.addContainersItem(containerModel);
         }
+        systemConfiguration.setPackType(packType);
         this.systemConfiguration = systemConfiguration;
         log.info("system configuration loaded {}", systemConfiguration);
     }

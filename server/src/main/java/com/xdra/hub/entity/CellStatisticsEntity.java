@@ -67,6 +67,24 @@ public class CellStatisticsEntity {
     @Column(name = "imp_std_dev_to_avg_ratio")
     private Double impStdDevToAvgRatio;
 
+    @Column(name = "max_impedance_std_dev")
+    private Double maxImpedanceStdDev;
+
+    @Column(name = "min_impedance_std_dev")
+    private Double minImpedanceStdDev;
+
+    @Column(name = "max_abs_impedance")
+    private Double maxAbsImpedance;
+
+    @Column(name = "min_abs_impedance")
+    private Double minAbsImpedance;
+
+    @Column(name = "max_coefficient_variation")
+    private Double maxCoefficientOfVariation;
+
+    @Column(name = "min_coefficient_variation")
+    private Double minCoefficientOfVariation;
+
     @Column(name = "nyquist_plot", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode nyquistPlot;
@@ -87,9 +105,15 @@ public class CellStatisticsEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode realPartCorrelation;
 
-    @Column(name = "eq_circuit_data", columnDefinition = "jsonb")
+    @Column(name = "equivalent_circuit_diagram", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-    private JsonNode eqCircuitData;
+    private JsonNode equivalentCircuitData;
+
+    @Column(name = "real_part_10hz")
+    private Double realPart10Hz;
+
+    @Column(name = "imaginary_part_10hz")
+    private Double imaginaryPart10Hz;
 
     @Column(name = "creation_time")
     private Instant creationTime;

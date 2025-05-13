@@ -3,15 +3,10 @@ WORKDIR /app
 
 # Copy package files and install dependencies
 COPY package*.json ./
-RUN npm install cnpm -g --registry=https://registry.npmmirror.com
-RUN cnpm install
+RUN npm install
 
 # Copy project files
 COPY . .
-
-# Create .env file with backend URL during build
-ARG BACKEND_URL=http://localhost:8080
-RUN echo "BACKEND_URL=$BACKEND_URL" > .env.production
 
 # Build the application
 RUN npm run build

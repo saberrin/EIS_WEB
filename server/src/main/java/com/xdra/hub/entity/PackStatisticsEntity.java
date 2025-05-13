@@ -12,7 +12,7 @@ import org.hibernate.type.SqlTypes;
 import java.time.Instant;
 
 @Entity
-@Table(name = "pack_metrics")
+@Table(name = "pack_statistics")
 @Data
 @Builder
 @NoArgsConstructor
@@ -79,4 +79,8 @@ public class PackStatisticsEntity {
 
     @Column(name = "creation_time")
     private Instant creationTime;
+
+    @Column(name = "cell_colors")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonNode cellColors;
 }

@@ -284,7 +284,7 @@ components:
           type: number
           format: double
         degradationLevel:
-          type: string
+          $ref: "#/components/schemas/DegradationLevel"
         suggestion:
           type: string
         alertText:
@@ -294,6 +294,9 @@ components:
         creationTime:
           type: string
           format: date-time
+        cellColors:
+          type: object
+          description: JSON representation of cell color information
     PackMetrics:
       type: object
       properties:
@@ -310,7 +313,7 @@ components:
           type: number
           format: double
         degradationLevel:
-          type: string
+          $ref: "#/components/schemas/DegradationLevel"
     PackHistogram:
       type: array
       items:
@@ -350,13 +353,13 @@ components:
     CellHistogramPoint:
       type: object
       properties:
-        absImpedanceMean:
+        realPart10Hz:
           type: number
           format: double
-        impedanceStdDev:
+        imagPart10Hz:
           type: number
           format: double
-        coefficientOfVariation:
+        r0:
           type: number
           format: double
         timestamp:
@@ -384,7 +387,7 @@ components:
     EquivalentCircuitDiagram:
       type: object
       properties:
-        r1:
+        r0:
           type: number
           format: double
         rct:
@@ -394,9 +397,6 @@ components:
           type: number
           format: double
         zw:
-          type: number
-          format: double
-        rb:
           type: number
           format: double
     Range:
@@ -441,6 +441,9 @@ components:
           type: number
           format: double
         phase:
+          type: number
+          format: double
+        amplitude:
           type: number
           format: double
     DrtPlot:
@@ -523,8 +526,30 @@ components:
         creationTime:
           type: string
           format: date-time
-        longWaveformData:
-          type: object
+        realPart10Hz:
+          type: number
+          format: double
+        imaginaryPart10Hz:
+          type: number
+          format: double
+        maxImpedanceStdDev:
+          type: number
+          format: double
+        minImpedanceStdDev:
+          type: number
+          format: double
+        maxAbsImpedance:
+          type: number
+          format: double
+        minAbsImpedance:
+          type: number
+          format: double
+        maxCoefficientOfVariation:
+          type: number
+          format: double
+        minCoefficientOfVariation:
+          type: number
+          format: double
     CellMetrics:
       type: object
       properties:
@@ -569,6 +594,7 @@ components:
           format: double
         impedanceStdDevToMinRatio:
           type: number
+          format: double
         impedanceStdDevToAvgRatio:
           type: number
           format: double
@@ -584,6 +610,9 @@ components:
           type: string
         color:
           type: string
+    DegradationLevel:
+      type: string
+      enum: ["Normal", "Mild", "Severe"]
   parameters:
     containerId:
       in: path
